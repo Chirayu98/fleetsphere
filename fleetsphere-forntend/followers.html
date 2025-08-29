@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Followers – Jobsy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --main-bg: #f4f8fb;
+      --main-blue: #2063dc;
+      --main-blue-dark: #154ba1;
+      --sidebar-bg: #18222f;
+      --sidebar-active: #2151bf;
+      --main-green: #36c07d;
+      --sidebar-width: 240px;
+      --sidebar-width-collapsed: 64px;
+      --card-radius: 1.15rem;
+      --card-shadow: 0 6px 20px rgba(42,105,234,0.07), 0 1.5px 4px rgba(0,0,0,0.02);
+      --transition: 0.3s cubic-bezier(.5,.7,.4,1);
+    }
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: var(--main-bg);
+      color: #1a2433;
+      min-height: 100vh;
+      margin: 0;
+      transition: background var(--transition), color var(--transition);
+      overflow-x: hidden;
+    }
+    .wrapper { display: flex; min-height: 100vh; position: relative; }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      color: #fff;
+      padding: 2rem 0 1rem 0;
+      display: flex;
+      flex-direction: column;
+      transition: width var(--transition);
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .sidebar.collapsed { width: var(--sidebar-width-collapsed);}
+    .sidebar .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+      height: 74px;
+    }
+    .sidebar .logo img {
+      width: 200px;
+      height: 74px;
+      object-fit: contain;
+    }
+    .sidebar.collapsed .logo img {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+    }
+    .sidebar a {
+      color: inherit;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      font-size: 1rem;
+      gap: 18px;
+      border-left: 4px solid transparent;
+      transition: background var(--transition), border var(--transition);
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: var(--sidebar-active);
+      border-left-color: var(--main-green);
+    }
+    .sidebar a .fa { min-width: 20px; }
+    .sidebar a span { transition: opacity var(--transition);}
+    .sidebar.collapsed a span { opacity: 0; visibility: hidden;}
+    /* Hamburger */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: var(--sidebar-active);
+      cursor: pointer;
+      z-index: 1001;
+    }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 15;
+      transition: opacity 0.3s ease;
+    }
+    .sidebar-overlay.active {
+      display: block;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .main-content {
+      flex: 1;
+      padding: 3rem clamp(4vw, 7vw, 70px);
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 2rem;
+      color: var(--main-blue-dark);
+      margin-bottom: 2.2rem;
+      margin-top: 0;
+      font-weight: 600;
+      letter-spacing: -1px;
+    }
+    #followers-container {
+      display: grid;
+      gap: 1.3rem;
+      grid-template-columns: repeat(auto-fit, minmax(310px,1fr));
+    }
+    .follower-card {
+      background: #fff;
+      border-radius: var(--card-radius);
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      border: 1.5px solid #f0f4fa;
+      transition: border var(--transition), box-shadow var(--transition), transform var(--transition);
+    }
+    .follower-card:hover {
+      border-color: var(--main-blue);
+      box-shadow: 0 10px 30px 0 rgba(32,99,220,.10);
+      transform: scale(1.018) translateY(-2px);
+    }
+    .follower-card img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #eee;
+      background: #e6ebf4;
+      box-shadow: 0 1.5px 6px 0 rgba(32,99,220,0.07);
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .follower-info h4 {
+      margin: 0 0 6px 0;
+      font-size: 1.12rem;
+      font-weight: 600;
+      color: var(--main-blue-dark);
+      word-break: break-word;
+    }
+    .follower-info small {
+      color: #888;
+      font-size: 0.97rem;
+      word-break: break-word;
+    }
+    .empty-msg {
+      grid-column: 1/-1;
+      text-align: center;
+      margin-top: 38px;
+      font-size: 1.18rem;
+      color: #7e91ac;
+      font-style: italic;
+      user-select: none;
+    }
+    /* Responsive tweaks */
+    @media(max-width:1020px){
+      .main-content { padding: 2rem 3vw;}
+      .sidebar{width:190px;}
+      .sidebar.collapsed{width: var(--sidebar-width-collapsed);}
+    }
+    @media(max-width:700px){
+      .sidebar-toggle{display:inline-block;}
+      .sidebar{
+        position:fixed;top:0;left:0;height:100dvh;
+        transform:translateX(-110%);
+        max-width:280px; padding-top:80px;
+        box-shadow: 0 0 30px 8px rgba(31,72,234,0.058);
+        transition:transform 0.3s ease;
+        z-index:1010;
+      }
+      .sidebar.open{transform:translateX(0);}
+      body.sidebar-open{overflow:hidden;}
+      .sidebar-overlay{display:block;}
+      #followers-container{grid-template-columns:1fr;}
+      .main-content { padding: 1.5rem;}
+    }
+    @media(max-width:490px){
+      .main-content { padding: 0.7rem 0.4rem 1.2rem 0.4rem;}
+      .follower-card { padding: 1rem 0.7rem; gap: 12px;}
+      .follower-card img{width:52px;height:52px;}
+      .follower-info h4{font-size:1.01rem;}
+      .follower-info small{font-size:0.90rem;}
+    }
+  </style>
+</head>
+<body>
+<!-- Hamburger for sidebar -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu">
+  <i class="fas fa-bars"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="wrapper">
+  <nav class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" />
+    </div>
+    <a href="dashboard-company.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="company-post.html"><i class="fas fa-briefcase"></i><span>My Posts</span></a>
+    <a href="post-job.html"><i class="fas fa-plus-circle"></i><span>Post Job</span></a>
+    <a href="company-applicants.html"><i class="fas fa-users"></i><span>Applicants</span></a>
+    <a href="followers.html" class="active"><i class="fas fa-heart"></i><span>Followers</span></a>
+    <a href="company-profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </nav>
+  <main class="main-content">
+    <h1>Followers</h1>
+    <div id="followers-container">
+      <!-- Follower cards load here -->
+    </div>
+  </main>
+</div>
+<script>
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+const toggleBtn = document.querySelector('.sidebar-toggle');
+function toggleSidebar() {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+  document.body.classList.toggle('sidebar-open');
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+  document.body.classList.remove('sidebar-open');
+}
+window.addEventListener('resize', () => { if(window.innerWidth>=700) closeSidebar(); });
+
+const user = JSON.parse(localStorage.getItem("jobsyUser"));
+if (!user || user.role !== "company") {
+  window.location.href = "login.html";
+}
+const container = document.getElementById("followers-container");
+async function fetchFollowers() {
+  try {
+    const res = await fetch(`http://localhost:3000/followers/${user._id}`);
+    const data = await res.json();
+    if (data.success && data.followers.length > 0) {
+      renderFollowers(data.followers);
+    } else {
+      container.innerHTML = `<div class="empty-msg">You don't have any followers yet.</div>`;
+    }
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<div class="empty-msg">Error loading followers.</div>`;
+  }
+}
+function renderFollowers(followers) {
+  container.innerHTML = "";
+  followers.forEach(follower => {
+    const card = document.createElement("div");
+    card.className = "follower-card";
+    const avatar = follower.imageUrl || `https://i.pravatar.cc/150?u=${follower._id}`;
+    card.innerHTML = `
+      <img src="${avatar}" alt="${follower.name}" />
+      <div class="follower-info">
+        <h4>${follower.name}</h4>
+        <small>${follower.email}</small>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+window.addEventListener('DOMContentLoaded', fetchFollowers);
+// Optional: close sidebar on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+    closeSidebar();
+  }
+});
+</script>
+</body>
+</html>

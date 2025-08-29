@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Post Job – Jobsy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --main-bg: #f4f8fb;
+      --main-blue: #2063dc;
+      --main-blue-dark: #154ba1;
+      --main-green: #36c07d;
+      --sidebar-bg: #18222f;
+      --sidebar-active: #2151bf;
+      --sidebar-width: 240px;
+      --sidebar-width-collapsed: 64px;
+      --transition: 0.3s cubic-bezier(.5,.7,.4,1);
+    }
+    * {
+      box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: var(--main-bg);
+      color: #1a2433;
+      min-height: 100vh;
+      margin: 0;
+      transition: background var(--transition), color var(--transition);
+      overflow-x: hidden;
+    }
+    .wrapper { display: flex; min-height: 100vh; position: relative; }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      color: white;
+      padding: 2rem 0 1rem 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: sticky; top: 0; z-index: 20;
+      transition: width var(--transition);
+    }
+    .sidebar.collapsed { width: var(--sidebar-width-collapsed);}
+    .sidebar .logo {
+      text-align: center; margin-bottom: 2rem; height: 74px;
+    }
+    .sidebar .logo img {
+      width: 200px; height: 74px; object-fit: contain; user-select: none; pointer-events: none;
+    }
+    .sidebar.collapsed .logo img {
+      width: 54px;height:54px;border-radius:50%;
+    }
+    .sidebar a {
+      color: inherit;
+      padding: 1rem 2rem;
+      display: flex; align-items: center;
+      text-decoration: none;
+      font-size: 1rem; gap: 18px;
+      border-left: 4px solid transparent;
+      font-weight: 500;
+      transition: background var(--transition), border var(--transition);
+      white-space: nowrap;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: var(--sidebar-active);
+      border-left-color: var(--main-green);
+    }
+    .sidebar a .fa { min-width: 20px;}
+    .sidebar a span {transition: opacity var(--transition);}
+    .sidebar.collapsed a span { opacity: 0; visibility: hidden; width: 0;}
+    /* Hamburger menu */
+    .sidebar-toggle {
+      display: none;
+      position: fixed; top: 16px; left: 16px;
+      background: none; border: none; font-size: 2rem;
+      color: var(--sidebar-active); cursor: pointer; z-index: 1001;
+    }
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 15;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .sidebar-overlay.active {
+      display: block; opacity: 1; pointer-events: auto;
+    }
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 3rem clamp(4vw, 7vw, 70px);
+      min-height: 100vh;
+      background: var(--main-bg);
+      display: flex; flex-direction: column;
+      align-items: center;
+      z-index: 1;
+    }
+    h1 {
+      font-size: 2rem;
+      color: var(--main-blue-dark);
+      margin-bottom: 2.2rem;
+      margin-top: 0;
+      font-weight: 600;
+      letter-spacing: -1px;
+      text-align: center;
+    }
+    form {
+      background: white;
+      padding: 30px 28px;
+      border-radius: 18px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 500px;
+      margin:auto;
+      display: flex; flex-direction: column;
+    }
+    form label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      margin-top: 18px;
+      color: var(--main-blue-dark);
+      font-size: 1rem;
+    }
+    form input,
+    form select,
+    form textarea {
+      width: 100%;
+      padding: 11px;
+      border-radius: 10px;
+      border: 1.3px solid #e5e7ee;
+      font-size: 15.5px;
+      margin-top: 5px;
+      background: #f7fafb;
+      color: #262837;
+      transition: border 0.2s;
+    }
+    form input:focus, form select:focus, form textarea:focus {
+      border: 1.6px solid var(--main-blue);
+      outline: none;
+      background: #f2f7fe;
+    }
+    form textarea { min-height: 86px; resize: vertical; }
+
+    form button {
+      margin-top: 26px;
+      background: var(--main-blue);
+      color: white;
+      border: none;
+      padding: 13px 0;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 9px;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.23s;
+      letter-spacing: .5px;
+      box-shadow: 0 1.5px 6px rgba(32,99,220,0.07);
+    }
+    form button:hover, form button:focus {
+      background: var(--main-blue-dark);
+      outline: none;
+    }
+
+    @media (max-width: 1020px) {
+      .main-content { padding: 2rem 3vw; }
+      .sidebar { width: 190px;}
+      .sidebar.collapsed { width: var(--sidebar-width-collapsed);}
+    }
+    @media (max-width: 700px) {
+      .sidebar-toggle { display: inline-block;}
+      .sidebar {
+        position: fixed; top: 0; left: 0; height: 100dvh;
+        width: var(--sidebar-width); max-width:280px;
+        padding-top: 80px;
+        transform: translateX(-110%);
+        box-shadow: 0 0 30px 8px rgba(31,72,234,0.058);
+        transition: transform 0.3s ease;
+        z-index: 1010;
+      }
+      .sidebar.collapsed {
+        width: var(--sidebar-width-collapsed);
+        transform: translateX(-110%);
+      }
+      .sidebar.open { transform: translateX(0);}
+      body.sidebar-open { overflow: hidden;}
+      .sidebar-overlay { display: block;}
+      .main-content { padding:1.5rem;}
+      form {padding: 20px 7vw;}
+    }
+    @media (max-width: 520px) {
+      .main-content { padding: 0.8rem 0.4rem 1.4rem 0.4rem;}
+      form {padding:17px 3vw;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hamburger for sidebar -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu">
+  <i class="fas fa-bars"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" />
+    </div>
+    <a href="dashboard-company.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="company-post.html"><i class="fas fa-briefcase"></i><span>My Posts</span></a>
+    <a href="post-job.html" class="active"><i class="fas fa-plus-circle"></i><span>Post Job</span></a>
+    <a href="company-applicants.html"><i class="fas fa-users"></i><span>Applicants</span></a>
+    <a href="followers.html"><i class="fas fa-heart"></i><span>Followers</span></a>
+    <a href="company-profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </nav>
+  <!-- Main Content -->
+  <main class="main-content">
+    <h1>Post a New Job</h1>
+    <form id="jobForm" autocomplete="off">
+      <label for="title">Job Title</label>
+      <input type="text" id="title" name="title" required />
+
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" required />
+
+      <label for="salary">Salary (₹ per month)</label>
+      <input type="number" id="salary" name="salary" required />
+
+      <label for="jobType">Job Type</label>
+      <select id="jobType" name="jobType" required>
+        <option value="">-- Select Type --</option>
+        <option value="Full-Time">Full-Time</option>
+        <option value="Part-Time">Part-Time</option>
+        <option value="Internship">Internship</option>
+        <option value="Freelance">Freelance</option>
+      </select>
+
+      <label for="workType">Work Type</label>
+      <select id="workType" name="workType" required>
+        <option value="">-- Select Work Type --</option>
+        <option value="Food Delivery">Food Delivery</option>
+        <option value="Parcel Delivery">Parcel Delivery</option>
+        <option value="Grocery Delivery">Grocery Delivery</option>
+        <option value="Courier Service">Courier Service</option>
+        <option value="Bike Rider">Bike Rider</option>
+      </select>
+
+      <label for="description">Job Description</label>
+      <textarea id="description" name="description" rows="5" required></textarea>
+
+      <button type="submit">Post Job</button>
+    </form>
+  </main>
+</div>
+<script>
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+function toggleSidebar() {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+  document.body.classList.toggle('sidebar-open');
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+  document.body.classList.remove('sidebar-open');
+}
+window.addEventListener('resize', () => { if(window.innerWidth>=700) closeSidebar(); });
+
+const user = JSON.parse(localStorage.getItem("jobsyUser"));
+if (!user || user.role !== "company") {
+  window.location.href = "login.html";
+}
+const form = document.getElementById("jobForm");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const job = {
+    title: form.title.value.trim(),
+    location: form.location.value.trim(),
+    salary: form.salary.value.trim(),
+    jobType: form.jobType.value,
+    workType: form.workType.value,
+    description: form.description.value.trim(),
+    company: user.name,
+    companyId: user._id
+  };
+  try {
+    const res = await fetch("http://localhost:3000/jobs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(job)
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Job posted successfully!");
+      window.location.href = "company-posts.html";
+    } else {
+      alert("❌ Failed to post job: " + data.message);
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    alert("❌ Something went wrong while posting job.");
+  }
+});
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+    closeSidebar();
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notifications – Jobsy</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #eaf4ff, #f3f3f3);
+  color: #333;
+  min-height: 100vh;
+}
+
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar & Hamburger */
+.sidebar {
+  width: 250px;
+  background: #060606;
+  color: white;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 200;
+  transition: left 0.3s;
+}
+
+.logo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.sidebar a {
+  color: white;
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background: #0d6efd;
+  border-left: 4px solid white;
+}
+
+.sidebar i {
+  margin-right: 12px;
+}
+
+/* Hamburger Button */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 18px;
+  left: 20px;
+  z-index: 300;
+  background: #fff;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+
+.hamburger i {
+  font-size: 24px;
+  color: #1e90ff;
+}
+
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.32);
+  z-index: 150;
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px;
+  background: transparent;
+}
+
+/* --- Notifications --- */
+h2 {
+  margin-bottom: 20px;
+  font-size: 26px;
+  color: #1e90ff;
+}
+
+.notification-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.notification-header button {
+  padding: 8px 18px;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.notification-header button:hover {
+  background: #dbeaff;
+}
+
+.notification-header button.active {
+  background: #1e90ff;
+  color: white;
+}
+
+.notification-card {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  margin-bottom: 18px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.notification-card:hover {
+  transform: translateY(-5px);
+}
+
+.notification-icon {
+  font-size: 24px;
+  color: #1e90ff;
+  width: 40px;
+}
+
+.notification-content h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.notification-content p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #444;
+}
+.notification-time {
+  font-size: 12px;
+  color: gray;
+  margin-top: 4px;
+}
+
+.toggle-theme {
+  text-align: center;
+  margin: 40px 0 10px;
+}
+.toggle-theme button {
+  background: white;
+  color: #1e90ff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+.toggle-theme button:hover {
+  background: #e0ecff;
+}
+
+.dark-mode {
+  background-color: #1e1e2f;
+  color: #eee;
+}
+
+.dark-mode .main-content {
+  background-color: #1e1e2f;
+  color: #eee;
+}
+.dark-mode .sidebar {
+  background: #162040;
+}
+.dark-mode .sidebar a {
+  color: #eee;
+}
+.dark-mode .sidebar a:hover,
+.dark-mode .sidebar a.active {
+  background: #3e5cb1;
+}
+.dark-mode .notification-card {
+  background: rgba(40, 40, 60, 0.95);
+}
+.dark-mode .notification-header button {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+.dark-mode .notification-header button.active {
+  background: #3e5cb1;
+  color: white;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+  .main-content {
+    padding: 24px 10px 32px 10px;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    height: 100vh;
+    width: 240px;
+    z-index: 220;
+    transition: left 0.3s;
+    box-shadow: 4px 0 16px rgba(0,0,0,0.11);
+    align-items: flex-start;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .sidebar .logo {
+    font-size: 21px;
+    margin-bottom: 26px;
+  }
+  .sidebar a span {
+    display: inline;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .menu-overlay.active {
+    display: block;
+  }
+}
+
+/* Hide text in sidebar when shrinking below 440px */
+@media (max-width: 440px) {
+  .sidebar {
+    width: 70px;
+    min-width: 70px;
+    align-items: center;
+  }
+  .sidebar .logo,
+  .sidebar a span {
+    display: none;
+  }
+  .sidebar a {
+    padding: 16px 18px;
+    justify-content: center;
+  }
+}
+  </style>
+</head>
+<body>
+
+<button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="wrapper">
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebarMenu">
+    <div class="logo">
+    <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" class="logo-img" style="width: 180px; height: auto;" />
+  </div>
+    <a href="dashboard-delivery.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="jobs.html"><i class="fas fa-tasks"></i><span>Jobs</span></a>
+    <a href="network.html"><i class="fas fa-users"></i><span>Network</span></a>
+    <a href="notification.html" class="active"><i class="fas fa-bell"></i><span>Notifications</span></a>
+    <a href="post.html"><i class="fas fa-plus-circle"></i><span>Post</span></a>
+    <a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="logout.html" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h2>Notifications</h2>
+
+    <!-- Tabs -->
+    <div class="notification-header">
+      <button class="active">All</button>
+      <button>Jobs</button>
+      <button>My Posts</button>
+      <button>Mentions</button>
+    </div>
+
+    <!-- Notification Feed (same as before) -->
+    <div class="notification-card" data-type="system">
+      <div class="notification-icon"><i class="fas fa-lightbulb"></i></div>
+      <div class="notification-content">
+        <h4>Delivery Tip</h4>
+        <p>Avoid heavy traffic hours by taking inner routes in SG Highway zone 🚦</p>
+        <div class="notification-time">Today · System Update</div>
+      </div>
+    </div>
+    <div class="notification-card" data-type="job">
+      <div class="notification-icon"><i class="fas fa-briefcase"></i></div>
+      <div class="notification-content">
+        <h4>Zomato Recruiter</h4>
+        <p>Posted a job update: <em>“Urgent hiring in Vastrapur area”</em></p>
+        <div class="notification-time">1h ago · Job Update</div>
+      </div>
+    </div>
+    <div class="notification-card" data-type="post">
+      <div class="notification-icon"><i class="fas fa-user-friends"></i></div>
+      <div class="notification-content">
+        <h4>Simran Patel</h4>
+        <p>Your connection shared: <em>“Great day delivering during the festival!”</em> 🎉</p>
+        <div class="notification-time">2h ago · Connection Post</div>
+      </div>
+    </div>
+    <div class="notification-card" data-type="mention">
+      <div class="notification-icon"><i class="fas fa-at"></i></div>
+      <div class="notification-content">
+        <h4>You were mentioned</h4>
+        <p>Raj Mehta said: <em>“@you let’s plan tomorrow’s route together?”</em></p>
+        <div class="notification-time">4h ago · Mention</div>
+      </div>
+    </div>
+    <div class="notification-card" data-type="achievement">
+      <div class="notification-icon"><i class="fas fa-trophy"></i></div>
+      <div class="notification-content">
+        <h4>Jobsy Insights</h4>
+        <p>You’ve completed <strong>20 deliveries</strong> this week — awesome hustle! 🔥</p>
+        <div class="notification-time">Yesterday · Achievement</div>
+      </div>
+    </div>
+    <div class="notification-card" data-type="group">
+      <div class="notification-icon"><i class="fas fa-users"></i></div>
+      <div class="notification-content">
+        <h4>Reminder</h4>
+        <p>Group meeting at <strong>Maninagar</strong> at <strong>5 PM</strong> today. Don’t be late!</p>
+        <div class="notification-time">Today · Group Notification</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ✅ Check user login and role
+  const user = JSON.parse(localStorage.getItem("jobsyUser"));
+  if (!user || user.role !== "delivery") {
+    window.location.href = "login.html";
+  }
+
+  // ✅ Logout Function
+  function logout() {
+    if (confirm("Are you sure you want to logout?")) {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+  }
+
+  // ✅ Dark mode toggle and save preference
+  function toggleTheme() {
+    const isDark = document.body.classList.toggle("dark-mode");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }
+
+  // ✅ Apply saved theme on load
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark-mode");
+    }
+    setupFilterButtons();
+    setupSidebarMenu();
+  });
+
+  // ✅ Filter functionality for notification buttons
+  function setupFilterButtons() {
+    const buttons = document.querySelectorAll('.notification-header button');
+    const cards = document.querySelectorAll('.notification-card');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const type = btn.textContent.trim();
+        cards.forEach(card => {
+          const content = card.querySelector('.notification-time')?.textContent.toLowerCase();
+          if (type === 'All') {
+            card.style.display = 'flex';
+          } else if (
+            (type === 'Jobs' && content.includes('job')) ||
+            (type === 'My Posts' && content.includes('connection')) ||
+            (type === 'Mentions' && content.includes('mention'))
+          ) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  // 🟦 Hamburger and Sidebar logic
+  function setupSidebarMenu() {
+    const hamburger = document.getElementById('hamburgerBtn');
+    const sidebar = document.getElementById('sidebarMenu');
+    const overlay = document.getElementById('menuOverlay');
+    // Show/hide sidebar on hamburger click
+    hamburger.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("active");
+    });
+    // Hide sidebar on overlay click
+    overlay.addEventListener("click", () => {
+      sidebar.classList.remove("open");
+      overlay.classList.remove("active");
+    });
+    // Hide sidebar after link click (mobile only)
+    sidebar.querySelectorAll('a').forEach(link => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove("open");
+          overlay.classList.remove("active");
+        }
+      });
+    });
+  }
+</script>
+</body>
+</html>

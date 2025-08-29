@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sign Up – FleetSphere</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --panel-left: linear-gradient(120deg, #a28cebcc 0%, #9bb9f3cc 100%);
+      --panel-right: rgba(255 255 255 / 0.96);
+      --accent: #6a80f5;
+      --button-gradient: linear-gradient(90deg, #fc6076 0%, #ff9a44 100%);
+      --button-hover: linear-gradient(90deg, #6a80f5 0%, #a18cd1 100%);
+      --input-bg: #fbfbfd;
+      --input-border: #8a82d9;
+      --shadow: 0 16px 40px rgba(160, 118, 228, 0.28);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    body, html {
+      height: 100%;
+      width: 100%;
+      background: url('https://wallpaperaccess.com/full/1320272.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0,0,0,0.55);
+      z-index: 0;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 880px;
+      max-width: 98vw;
+      height: 650px;
+      display: flex;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      background: none;
+    }
+    .side-panel {
+      flex: 1.07;
+      background: var(--panel-left);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 56px 40px;
+      border-top-left-radius: 18px;
+      border-bottom-left-radius: 18px;
+      box-shadow: 8px 0 24px rgba(0,0,0,0.48) inset;
+      color: #fff;
+      text-shadow: 0 0 6px rgba(0,0,0,0.65);
+    }
+    .side-panel h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+    .side-panel p {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .side-panel button {
+      padding: 11px 28px;
+      border: none;
+      background: #fff;
+      color: var(--accent);
+      font-weight: 700;
+      border-radius: 28px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(95, 89, 247, 0.2);
+      transition: all 0.3s ease;
+    }
+    .side-panel button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .signup-panel {
+      flex: 1;
+      background: var(--panel-right);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 42px;
+      border-top-right-radius: 18px;
+      border-bottom-right-radius: 18px;
+      text-align: center;
+    }
+    .logo {
+      margin-bottom: 20px;
+    }
+    .logo img {
+      max-height: 120px;
+      max-width: 120px;
+    }
+    .form-wrap {
+      width: 100%;
+      max-width: 340px;
+      text-align: left;
+    }
+    .signup-panel h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 22px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 24px;
+      border: 1.8px solid var(--input-border);
+      font-size: 1rem;
+      background: var(--input-bg);
+      color: #444;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #fc6076;
+      background: #fef6fa;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--button-gradient);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 26px;
+      margin-top: 6px;
+      box-shadow: 0 4px 22px #fc607699;
+      transition: background 0.23s, box-shadow 0.19s;
+    }
+    .submit-btn:hover {
+      background: var(--button-hover);
+      box-shadow: 0 6px 24px #6a80f5bb;
+    }
+    .signup-panel p {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #555;
+      text-align: center;
+    }
+    .signup-panel a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: underline;
+      transition: color 0.18s;
+    }
+    .signup-panel a:hover {
+      color: #fc6076;
+    }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+      .side-panel, .signup-panel {
+        border-radius: 0;
+        padding: 38px 24px;
+      }
+    }
+    @media (max-width: 600px) {
+      .signup-panel h2 {
+        font-size: 1.3rem;
+      }
+      .side-panel h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Info Panel -->
+    <div class="side-panel">
+      <h1>Welcome to FleetSphere!</h1>
+      <p>Sign up to join thousands of companies and partners finding jobs or hiring with ease.</p>
+      <button onclick="window.location.href='login.html'">Already Registered? Log In</button>
+    </div>
+
+    <!-- Right Signup Form Panel -->
+    <div class="signup-panel">
+      <div class="logo">
+        <img src="assets/logo1-Photoroom.png" alt="FleetSphere Logo" />
+      </div>
+      <div class="form-wrap">
+        <h2>Create Your Account</h2>
+        <form id="signupForm">
+          <div class="form-group">
+            <input type="text" id="name" placeholder="Full Name" required />
+          </div>
+          <div class="form-group">
+            <input type="email" id="email" placeholder="Email Address" required />
+          </div>
+          <div class="form-group">
+            <input type="password" id="password" placeholder="Create Password" required />
+          </div>
+          <div class="form-group">
+            <select id="role" required>
+              <option value="" disabled selected>-- Select Role --</option>
+              <option value="delivery">Delivery Partner</option>
+              <option value="company">Company</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="text" id="vehicle" placeholder="Do you have a 2-wheeler? (Yes/No)" />
+          </div>
+          <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Log In</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+      const vehicle = document.getElementById("vehicle").value.trim();
+
+      try {
+        const res = await fetch("http://localhost:3000/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, role, vehicle }),
+        });
+        const data = await res.json();
+        alert(data.message);
+
+        if (data.success) {
+          localStorage.setItem("jobsyUser", JSON.stringify(data.user));
+          localStorage.setItem("userId", data.user._id);
+          if (data.user.role === "company") {
+            window.location.href = "dashboard-company.html";
+          } else {
+            window.location.href = "dashboard-delivery.html";
+          }
+        }
+      } catch (err) {
+        console.error("Signup error:", err);
+        alert("Signup failed. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>

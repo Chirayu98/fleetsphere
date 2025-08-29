@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>FleetSphere Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --panel-left: linear-gradient(120deg, #6a80f5cc 0%, #9bb9f3cc 100%);
+      --panel-right: rgba(255 255 255 / 0.96);
+      --accent: #6a80f5;
+      --button-gradient: linear-gradient(90deg, #6a80f5 0%, #9b5de5 100%);
+      --button-hover: linear-gradient(90deg, #4e54c8 0%, #8f94fb 100%);
+      --input-bg: #f9faff;
+      --input-border: #8a82d9;
+      --shadow: 0 16px 40px rgba(106, 128, 245, 0.28);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body, html { height: 100%; width: 100%; }
+    body {
+      background: url('https://wallpaperaccess.com/full/1320272.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      color: #fff;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0,0,0,0.55);
+      z-index: 0;
+    }
+    .login-container {
+      position: relative;
+      z-index: 1;
+      width: 900px;
+      max-width: 98vw;
+      height: 600px;
+      display: flex;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .left-side {
+      flex: 1.07;
+      background: var(--panel-left);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 56px 40px;
+      color: #fff;
+      border-top-left-radius: 18px;
+      border-bottom-left-radius: 18px;
+      box-shadow: 8px 0 24px rgba(0, 0, 0, 0.48) inset;
+      opacity: 0.9;
+    }
+    .left-side h1 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+    .left-side p {
+      font-size: 1.15rem;
+      margin-bottom: 32px;
+      margin-right: 18%;
+      font-weight: 500;
+      line-height: 1.6;
+      color: #f1f1f1;
+    }
+    .right-side {
+      flex: 1;
+      background: var(--panel-right);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 30px;
+      border-top-right-radius: 18px;
+      border-bottom-right-radius: 18px;
+      box-shadow: -8px 0 20px rgba(0,0,0,0.1);
+      color: #333;
+      text-align: center;
+    }
+    .logo {
+      margin-bottom: 8px;
+    }
+    .logo img {
+      max-width: 150px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    .form-wrap {
+      width: 100%;
+      max-width: 340px;
+      text-align: left;
+    }
+    .right-side h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 600;
+      color: #5855a1;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 24px;
+      border: 1.8px solid var(--input-border);
+      font-size: 1rem;
+      background: var(--input-bg);
+      color: #444;
+      transition: all 0.16s;
+    }
+    .form-group input:focus {
+      border-color: #6a80f5;
+      background: #eef1ff;
+    }
+    .remember-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      font-size: 0.95rem;
+      color: #6e6b97;
+    }
+    .remember-group input {
+      accent-color: #6a80f5;
+      margin-right: 10px;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+    }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 26px;
+      background: var(--button-gradient);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      transition: background 0.23s, box-shadow 0.19s;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 22px rgba(106,128,245,0.35);
+    }
+    .login-btn:hover {
+      background: var(--button-hover);
+      box-shadow: 0 6px 24px rgba(106,128,245,0.5);
+    }
+    .forgot {
+      color: #6a80f5;
+      font-size: 0.95rem;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-bottom: 14px;
+      display: inline-block;
+    }
+    .signup-btn {
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 18px;
+      border-radius: 24px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .signup-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .right-side p {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #777;
+      text-align: center;
+    }
+    .right-side p a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .right-side p a:hover { color: #fc6076; }
+
+    /* Responsive: Stack panels on smaller screens */
+    @media (max-width: 900px) {
+      .login-container {
+        flex-direction: column;
+        height: auto;
+        width: 95vw;
+      }
+      .left-side, .right-side {
+        border-radius: 0;
+        padding: 30px 20px;
+      }
+      .left-side {
+        border-bottom: 2px solid rgba(255,255,255,0.2);
+        text-align: center;
+      }
+      .left-side p {
+        margin-right: 0;
+      }
+    }
+    @media (max-width: 600px) {
+      .login-container {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .left-side h1 {
+        font-size: 2rem;
+      }
+      .left-side p {
+        font-size: 1rem;
+      }
+      .right-side h2 {
+        font-size: 1.3rem;
+      }
+      .form-wrap {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <!-- Welcome Panel -->
+    <div class="left-side">
+      <h1>Welcome<br>Back</h1>
+      <p>Connect directly with companies, explore delivery jobs, and expand your professional network. FleetSphere helps you take control of your career.</p>
+    </div>
+    <!-- Login Form Panel -->
+    <div class="right-side">
+      <div class="logo">
+        <img src="assets/logo1-Photoroom.png" alt="FleetSphere Logo" />
+      </div>
+      <div class="form-wrap">
+        <h2>Sign in</h2>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="login_email">Email Address</label>
+            <input type="email" id="login_email" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="login_password">Password</label>
+            <input type="password" id="login_password" required autocomplete="current-password" />
+          </div>
+          <div class="remember-group">
+            <input type="checkbox" id="rememberMe" />
+            <label for="rememberMe" style="margin-bottom:0;cursor:pointer;">Remember Me</label>
+          </div>
+          <button type="submit" class="login-btn">Sign in</button>
+        </form>
+        <a class="forgot" href="#">Forgot your password?</a><br>
+        <button class="signup-btn" onclick="window.location.href='signup.html'">Create Account</button>
+        <p>By signing in you agree to <a href="terms.html">Terms</a> | <a href="privacy.html">Privacy Policy</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('login_email').value.trim();
+      const password = document.getElementById('login_password').value;
+
+      try {
+        const res = await fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!res.ok) {
+          alert('Login failed. Please check your credentials.');
+          return;
+        }
+
+        const data = await res.json();
+        alert(data.message);
+
+        if (data.success) {
+          localStorage.setItem('fleetsphereUser', JSON.stringify(data.user));
+          localStorage.setItem('userId', data.user._id);
+
+          if (data.user.role === 'company') {
+            window.location.href = 'dashboard-company.html';
+          } else {
+            window.location.href = 'dashboard-delivery.html';
+          }
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        alert('Login failed. Please try again later.');
+      }
+    });
+  </script>
+</body>
+</html>

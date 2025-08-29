@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Connections – Jobsy</title>
+
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to top right, #e8f0ff, #fdfdfd);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #000000;
+      color: white;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      transition: width 0.3s ease;
+    }
+
+    .sidebar.collapsed {
+      width: 70px;
+    }
+
+    .sidebar .logo {
+      text-align: center;
+      font-weight: bold;
+      margin: 0 15px 30px;
+    }
+
+    .sidebar .logo img {
+      max-width: 90%;
+      height: auto;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar.collapsed .logo img {
+      max-width: 50px;
+      border-radius: 50%;
+    }
+
+    .sidebar a {
+      color: inherit;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+      font-weight: 600;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .sidebar.collapsed a {
+      padding: 15px 12px;
+      justify-content: center;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #0d6efd;
+      border-left: 4px solid white;
+    }
+
+    .sidebar.collapsed a:hover,
+    .sidebar.collapsed a.active {
+      border-left: 0;
+      background: #0d6efd;
+      border-radius: 0 20px 20px 0;
+    }
+
+    .sidebar i {
+      min-width: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .sidebar.collapsed a span {
+      display: none;
+    }
+
+    /* Hamburger toggle */
+    .hamburger {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: transparent;
+      border: none;
+      font-size: 2rem;
+      color: #0d6efd;
+      cursor: pointer;
+      z-index: 1100;
+      display: none;
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 40px;
+      background: transparent;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar.collapsed ~ .main-content {
+      margin-left: 70px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #1e90ff;
+    }
+
+    .main-content p {
+      margin-bottom: 30px;
+      color: #555;
+    }
+
+    .connection-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+      cursor: default;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .profile-pic {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid #1e90ff;
+    }
+
+    .card-info h4 {
+      margin-bottom: 5px;
+      font-size: 18px;
+      color: #1e90ff;
+    }
+
+    .card-info p {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .card-info small {
+      color: #999;
+      font-size: 12px;
+    }
+
+    .btn-remove {
+      margin-top: 10px;
+      background-color: #dc2626; /* Tailwind Red 600 */
+      border: none;
+      color: white;
+      padding: 7px 15px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      outline: none;
+    }
+
+    .btn-remove:hover {
+      background-color: #b91c1c; /* Tailwind Red 700 */
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+      margin-top: 40px;
+      font-size: 16px;
+    }
+
+    .dark-mode {
+      background-color: #1e1e2f;
+      color: #eee;
+    }
+
+    .dark-mode .main-content {
+      background-color: #1e1e2f;
+    }
+
+    .dark-mode .sidebar {
+      background: #162040;
+    }
+
+    .dark-mode .sidebar a {
+      color: #eee;
+    }
+
+    .dark-mode .sidebar a:hover,
+    .dark-mode .sidebar a.active {
+      background: #3e5cb1;
+    }
+
+    .dark-mode .card {
+      background: rgba(27, 34, 60, 0.9);
+      color: #dae1f2;
+    }
+
+    .dark-mode .card-info h4 {
+      color: #65a6ff;
+    }
+
+    .dark-mode .card-info p,
+    .dark-mode .card-info small {
+      color: #a0accd;
+    }
+
+    .dark-mode .btn-remove {
+      background-color: #f87171; /* Tailwind Red 400 */
+      color: #1a202c;
+    }
+
+    .dark-mode .btn-remove:hover {
+      background-color: #ef4444; /* Tailwind Red 500 */
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hamburger {
+        display: block;
+      }
+      .sidebar {
+        width: 100%;
+        max-width: 300px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        transition: left 0.3s ease;
+        padding-top: 60px;
+        z-index: 1001;
+      }
+      .sidebar.open {
+        left: 0;
+        box-shadow: 2px 0 12px rgba(0,0,0,0.3);
+      }
+      .main-content {
+        margin-left: 0 !important;
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .connection-cards {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<button class="hamburger" aria-label="Toggle menu" aria-controls="sidebar" aria-expanded="false" id="hamburgerBtn">
+  <i class="fas fa-bars"></i>
+</button>
+
+<div class="wrapper">
+  <nav id="sidebar" class="sidebar" aria-label="Sidebar Navigation">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" />
+    </div>
+    <a href="dashboard.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="jobs.html"><i class="fas fa-tasks"></i><span>Jobs</span></a>
+    <a href="network.html" class="active"><i class="fas fa-users"></i><span>Network</span></a>
+    <a href="notification.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+    <a href="post.html"><i class="fas fa-plus-circle"></i><span>Post</span></a>
+    <a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </nav>
+
+  <main class="main-content" tabindex="0">
+    <h2>My Connections</h2>
+    <p>Here are the people you've connected with on Jobsy.</p>
+    <div id="connection-container" class="connection-cards" aria-live="polite" aria-label="Your connections">
+      <!-- Connections will be rendered here -->
+    </div>
+  </main>
+</div>
+
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburgerBtn');
+
+  hamburger.addEventListener('click', () => {
+    const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+    hamburger.setAttribute('aria-expanded', !expanded);
+    sidebar.classList.toggle('open');
+    document.body.classList.toggle('sidebar-open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', false);
+        document.body.classList.remove('sidebar-open');
+      }
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 900 && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', false);
+      document.body.classList.remove('sidebar-open');
+    }
+  });
+
+  const connectionContainer = document.getElementById('connection-container');
+
+  async function loadConnections() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('Please login first.');
+      window.location.href = 'login.html';
+      return;
+    }
+    try {
+      const response = await fetch(`http://localhost:3000/connections/${userId}`);
+      const data = await response.json();
+      if (data.success && Array.isArray(data.connections) && data.connections.length > 0) {
+        renderConnections(data.connections);
+      } else {
+        connectionContainer.innerHTML = '<p class="empty-msg">You have no connections yet.</p>';
+      }
+    } catch (error) {
+      console.error('Failed to load connections', error);
+      connectionContainer.innerHTML = '<p class="empty-msg">Failed to load connections.</p>';
+    }
+  }
+
+  function renderConnections(connections) {
+    connectionContainer.innerHTML = '';
+    connections.forEach(connection => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const imgSrc = connection.imageUrl || `https://i.pravatar.cc/70?u=${connection._id}`;
+      card.innerHTML = `
+        <img src="${imgSrc}" alt="Profile picture of ${connection.name}" class="profile-pic" />
+        <div class="card-info">
+          <h4>${connection.name}</h4>
+          <p>${connection.role} – ${connection.location}</p>
+          <small>Connected recently</small>
+          <button class="btn-remove" aria-label="Remove connection with ${connection.name}" data-id="${connection._id}">Remove</button>
+        </div>
+      `;
+      connectionContainer.appendChild(card);
+    });
+  }
+
+  connectionContainer.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('btn-remove')) {
+      const connectionId = e.target.getAttribute('data-id');
+      if (!connectionId) return;
+
+      try {
+        const res = await fetch(`http://localhost:3000/connections/${connectionId}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+          loadConnections();
+        } else {
+          alert('Failed to remove connection.');
+        }
+      } catch (error) {
+        console.error('Error removing connection:', error);
+        alert('Error removing connection.');
+      }
+    }
+  });
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
+
+  document.addEventListener('DOMContentLoaded', loadConnections);
+</script>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Company Profile – Jobsy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --main-bg: #f4f8fb;
+      --main-blue: #2063dc;
+      --main-blue-dark: #154ba1;
+      --main-green: #36c07d;
+      --sidebar-bg: #18222f;
+      --sidebar-active: #2151bf;
+      --sidebar-width: 240px;
+      --sidebar-width-collapsed: 64px;
+      --transition: 0.3s cubic-bezier(.5,.7,.4,1);
+    }
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: var(--main-bg);
+      color: #1a2433;
+      min-height: 100vh;
+      margin: 0;
+      transition: background var(--transition), color var(--transition);
+      overflow-x: hidden;
+    }
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+    /* Sidebar styles */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      color: #fff;
+      padding: 2rem 0 1rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      transition: width var(--transition);
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .sidebar.collapsed {
+      width: var(--sidebar-width-collapsed);
+    }
+    .sidebar .logo {
+      text-align: center;
+      margin-bottom: 2.2rem;
+      height: 74px;
+      transition: opacity var(--transition);
+    }
+    .sidebar .logo img {
+      width: 200px;
+      height: 74px;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+    }
+    .sidebar.collapsed .logo img {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+    }
+    .sidebar a {
+      color: inherit;
+      padding: 1rem 2.2rem;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      font-size: 1.01rem;
+      gap: 18px;
+      border-left: 4px solid transparent;
+      font-weight: 500;
+      transition: background var(--transition), color var(--transition), border var(--transition);
+      position: relative;
+      white-space: nowrap;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: var(--sidebar-active);
+      color: #fff;
+      border-left: 4px solid var(--main-green);
+    }
+    .sidebar a .fa {
+      width: 20px;
+      min-width: 20px;
+      text-align: center;
+      font-size: 1.13rem;
+    }
+    .sidebar a span {
+      transition: opacity var(--transition), visibility var(--transition);
+      user-select: none;
+    }
+    .sidebar.collapsed a span {
+      opacity: 0;
+      visibility: hidden;
+      width: 0;
+      pointer-events: none;
+    }
+    /* Hamburger menu mobile */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 16px; left: 16px;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: var(--sidebar-active);
+      cursor: pointer;
+      z-index: 1001;
+      transition: color var(--transition);
+      user-select: none;
+    }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 15;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sidebar-overlay.active {
+      display: block;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* Main content */
+    .main-content {
+      flex: 1;
+      padding: 3.6rem clamp(4vw, 7vw, 70px);
+      background: var(--main-bg);
+      min-height: 100vh;
+      transition: padding var(--transition);
+      position: relative;
+      z-index: 1;
+    }
+    @media (max-width:1020px) {
+      .main-content { padding: 2rem 3vw; }
+      .sidebar { width: 190px; }
+      .sidebar.collapsed { width: var(--sidebar-width-collapsed);}
+    }
+    @media (max-width:700px) {
+      .sidebar-toggle { display: inline-block; }
+      .sidebar {
+        position: fixed; top: 0; left: 0; height: 100dvh;
+        width: var(--sidebar-width); max-width: 280px;
+        padding-top: 80px;
+        transform: translateX(-110%);
+        box-shadow: 0 0 30px 8px rgba(31,72,234,0.058);
+        transition: transform 0.3s ease;
+        z-index: 1010;
+      }
+      .sidebar.collapsed {
+        width: var(--sidebar-width-collapsed);
+        transform: translateX(-110%);
+      }
+      .sidebar.open { transform: translateX(0); }
+      body.sidebar-open { overflow: hidden; }
+      .sidebar-overlay { display: block; }
+      .main-content { padding: 1.5rem 1.5rem 2rem 1.5rem; min-height: auto;}
+    }
+    @media (max-width:490px) {
+      .main-content { padding: 0.8rem 0.4rem 1.4rem 0.4rem;}
+    }
+    /* Profile card styles */
+    .profile-card {
+      background: white;
+      padding: 34px 24px;
+      border-radius: 18px;
+      max-width: 410px;
+      margin: 42px auto 28px;
+      box-shadow: 0 6px 22px rgba(32,73,144,.11);
+      text-align: center;
+    }
+    @media (max-width:540px){
+      .profile-card{padding:17px 7vw 28px 7vw;}
+    }
+    .profile-img {
+      margin-bottom: 18px;
+    }
+    .profile-img img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3.5px solid var(--main-blue);
+      background: #eef3fb;
+      user-select: none;
+      pointer-events: none;
+    }
+    .profile-info h2 {
+      font-size: 1.43rem;
+      font-weight: 600;
+      color: var(--main-blue-dark);
+      margin: 0 0 2px 0;
+      word-break: break-word;
+    }
+    .profile-info p {
+      color: #626e99;
+      font-size: 1.04rem;
+      font-style: italic;
+      margin: 0 0 12px 0;
+      word-break: break-word;
+    }
+    .info-block {
+      margin-top: 15px;
+      text-align: left;
+    }
+    .info-block label {
+      font-weight: 600;
+      font-size: 1.02rem;
+      color: #435283;
+      margin-top: 17px;
+      display: block;
+      letter-spacing:.1px;
+    }
+    .info-block div {
+      margin-top: 5px;
+      background: #f1f5f9;
+      padding: 12px 13px;
+      border-radius: 9px;
+      color: #292d3e;
+      font-size: 1.03rem;
+      min-height: 28px;
+      word-break: break-word;
+    }
+    /* Edit profile button */
+    .btn-edit {
+      display: inline-block;
+      margin: 35px auto 0 auto;
+      background: var(--main-blue);
+      color: white;
+      padding: 10px 23px;
+      border-radius: 9px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.09rem;
+      box-shadow: 0 1.5px 6px rgba(32,99,220,0.07);
+      transition: background 0.23s, color 0.18s;
+      letter-spacing: .3px;
+      align-items: center;
+      border: none;
+    }
+    .btn-edit:hover, .btn-edit:focus {
+      background: var(--main-blue-dark);
+      color: #fff;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+<!-- Hamburger for sidebar -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu" aria-expanded="false" aria-controls="sidebar">
+  <i class="fas fa-bars"></i>
+</button>
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar" aria-label="Primary navigation">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" />
+    </div>
+    <a href="dashboard-company.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="company-post.html"><i class="fas fa-briefcase"></i><span>My Posts</span></a>
+    <a href="post-job.html"><i class="fas fa-plus-circle"></i><span>Post Job</span></a>
+    <a href="company-applicants.html"><i class="fas fa-users"></i><span>Applicants</span></a>
+    <a href="followers.html"><i class="fas fa-heart"></i><span>Followers</span></a>
+    <a href="company-profile.html" class="active"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content" id="maincontent" tabindex="-1">
+    <h1 style="text-align:center; font-size:2rem; color:var(--main-blue-dark); margin-bottom:2.2rem; margin-top:0;">Company Profile</h1>
+    <div class="profile-card" id="profileCard">
+      <div class="profile-img">
+        <img id="companyLogo" src="https://via.placeholder.com/120" alt="Company Logo" />
+      </div>
+      <div class="profile-info">
+        <h2 id="companyName">Loading Company Name...</h2>
+        <p id="companyTagline">Loading tagline...</p>
+      </div>
+      <div class="info-block">
+        <label for="email"><strong>Email</strong></label>
+        <div id="email">Loading...</div>
+
+        <label for="location"><strong>Location</strong></label>
+        <div id="location">Loading...</div>
+
+        <label for="description"><strong>About Us</strong></label>
+        <div id="description">Loading...</div>
+      </div>
+      <div style="margin-top: 32px; text-align:center;">
+        <a href="company-profile-edit.html" class="btn-edit"><i class="fas fa-pen"></i> Edit Profile</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Sidebar open/close for mobile
+  const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  const sidebarToggleBtn = document.querySelector('.sidebar-toggle');
+  const body = document.body;
+
+  function toggleSidebar() {
+    const isOpen = sidebar.classList.contains('open');
+    if (isOpen) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  }
+  function openSidebar() {
+    sidebar.classList.add('open');
+    sidebarOverlay.classList.add('active');
+    body.classList.add('sidebar-open');
+    sidebarToggleBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+    body.classList.remove('sidebar-open');
+    sidebarToggleBtn.setAttribute('aria-expanded', 'false');
+  }
+  // Auto collapse on resize (desktop/tablet)
+  function autoCollapseSidebar() {
+    if(window.innerWidth >= 700) {
+      closeSidebar();
+    }
+  }
+  window.addEventListener('resize', autoCollapseSidebar);
+
+  const user = JSON.parse(localStorage.getItem("jobsyUser"));
+  if (!user || user.role !== "company") {
+    window.location.href = "login.html";
+  }
+  const companyId = user._id;
+
+  async function loadCompanyProfile() {
+    try {
+      const response = await fetch(`http://localhost:3000/companies/${companyId}`);
+      if (!response.ok) throw new Error("Server returned an error");
+      const data = await response.json();
+      if (data.success && data.company) {
+        const c = data.company;
+        document.getElementById("companyName").innerText = c.name || "No Name Provided";
+        document.getElementById("companyTagline").innerText = c.tagline || "No Tagline";
+        document.getElementById("email").innerText = c.email || "No Email";
+        document.getElementById("location").innerText = c.location || "Not Specified";
+        document.getElementById("description").innerText = c.description || "No description provided";
+        const logo = c.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || "C")}&background=0D8ABC&color=fff`;
+        document.getElementById("companyLogo").src = logo;
+      } else {
+        document.getElementById("profileCard").innerHTML = "<p>Company profile not found.</p>";
+      }
+    } catch (error) {
+      console.error("Error loading profile:", error);
+      document.getElementById("profileCard").innerHTML = "<p>Something went wrong. Please try again later.</p>";
+    }
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    autoCollapseSidebar();
+    loadCompanyProfile();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if(sidebar.classList.contains('open')){
+        closeSidebar();
+      }
+    }
+  });
+</script>
+</body>
+</html>

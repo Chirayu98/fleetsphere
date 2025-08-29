@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Following – JobRoute</title>
+
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to top right, #f0f4ff, #ffffff);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #000000;
+      color: white;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      transition: width 0.3s ease;
+    }
+
+    .sidebar.collapsed {
+      width: 70px;
+    }
+
+    .sidebar .logo {
+      text-align: center;
+      font-weight: bold;
+      margin: 0 15px 30px;
+    }
+
+    .sidebar .logo img {
+      max-width: 90%;
+      height: auto;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar.collapsed .logo img {
+      max-width: 50px;
+      border-radius: 50%;
+    }
+
+    .sidebar a {
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+      font-weight: 600;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .sidebar.collapsed a {
+      padding: 15px 12px;
+      justify-content: center;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #0d6efd;
+      border-left: 4px solid white;
+    }
+
+    .sidebar.collapsed a:hover,
+    .sidebar.collapsed a.active {
+      border-left: 0;
+      background: #0d6efd;
+      border-radius: 0 20px 20px 0;
+    }
+
+    .sidebar i {
+      min-width: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .sidebar.collapsed a span {
+      display: none;
+    }
+
+    /* Hamburger toggle */
+    .hamburger {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: transparent;
+      border: none;
+      font-size: 2rem;
+      color: #0d6efd;
+      cursor: pointer;
+      z-index: 1100;
+      display: none;
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 40px;
+      background: transparent;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar.collapsed ~ .main-content {
+      margin-left: 70px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #1e90ff;
+    }
+
+    .main-content p {
+      margin-bottom: 25px;
+      color: #555;
+    }
+
+    .following-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .following-card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(6px);
+      cursor: default;
+    }
+
+    .following-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .following-card h4 {
+      margin: 0;
+      font-size: 18px;
+      color: #1e90ff;
+    }
+
+    .following-card p {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hamburger {
+        display: block;
+      }
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        width: 250px;
+        height: 100vh;
+        padding-top: 60px;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+      }
+      .sidebar.open {
+        left: 0;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+    }
+    @media (max-width: 480px) {
+      .following-grid {
+        grid-template-columns: 1fr;
+      }
+      .main-content {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<button class="hamburger" aria-label="Toggle menu" aria-controls="sidebar" aria-expanded="false" id="hamburgerBtn" tabindex="0">
+  <i class="fas fa-bars"></i>
+</button>
+
+<div class="wrapper">
+  <nav class="sidebar" id="sidebar" aria-label="Sidebar Navigation">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" />
+    </div>
+    <a href="dashboard-delivery.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="jobs.html"><i class="fas fa-tasks"></i><span>Jobs</span></a>
+    <a href="network.html" class="active"><i class="fas fa-users"></i><span>Network</span></a>
+    <a href="notification.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+    <a href="post.html"><i class="fas fa-plus-circle"></i><span>Post</span></a>
+    <a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </nav>
+
+  <main class="main-content">
+    <h2>Following</h2>
+    <p>Recruiters and companies you are currently following:</p>
+
+    <div class="following-grid">
+      <div class="following-card" tabindex="0">
+        <h4>HR – Swiggy</h4>
+        <p>Recruiter • Ahmedabad</p>
+      </div>
+      <div class="following-card" tabindex="0">
+        <h4>HR – Zomato</h4>
+        <p>Recruiter • SG Highway</p>
+      </div>
+      <div class="following-card" tabindex="0">
+        <h4>HR – Blinkit</h4>
+        <p>Recruiter • Vastrapur</p>
+      </div>
+      <div class="following-card" tabindex="0">
+        <h4>HR – Zepto</h4>
+        <p>Recruiter • Paldi</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+
+  hamburgerBtn.addEventListener('click', () => {
+    const expanded = hamburgerBtn.getAttribute('aria-expanded') === 'true';
+    hamburgerBtn.setAttribute('aria-expanded', !expanded);
+    sidebar.classList.toggle('open');
+    document.body.classList.toggle('sidebar-open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sidebar.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        hamburgerBtn.setAttribute('aria-expanded', false);
+        document.body.classList.remove('sidebar-open');
+      }
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 900 && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      hamburgerBtn.setAttribute('aria-expanded', false);
+      document.body.classList.remove('sidebar-open');
+    }
+  });
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>

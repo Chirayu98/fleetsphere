@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Delivery Dashboard – Jobsy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --main-bg: #f4f8fb;
+      --main-blue: #2063dc;
+      --main-blue-dark: #154ba1;
+      --main-green: #36c07d;
+      --sidebar-bg: #18222f;
+      --sidebar-active: #2151bf;
+      --sidebar-width: 240px;
+      --sidebar-width-collapsed: 64px;
+      --transition: 0.3s cubic-bezier(.5,.7,.4,1);
+    }
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: var(--main-bg);
+      margin: 0;
+      color: #1a2433;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+/* Wrapper for sidebar + main content */
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  background: var(--main-bg);
+  transition: padding-left var(--transition);
+  padding-left: var(--sidebar-width);
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: var(--sidebar-width);
+  background: #000000; /* Black background as in network.html */
+  color: white;
+  padding-top: 20px; /* consistent with network.html */
+  padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  transition: width var(--transition);
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  overflow-y: auto; /* ensure scroll if content overflow */
+}
+
+.sidebar.collapsed {
+  width: var(--sidebar-width-collapsed);
+}
+
+.sidebar .logo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px; /* spacing as network.html */
+  padding: 0 10px;
+}
+
+.sidebar .logo img {
+  width: 180px;  /* scaled to network.html image width */
+  height: auto;
+  object-fit: contain;
+  transition: width 0.3s, height 0.3s, border-radius 0.3s;
+}
+
+.sidebar.collapsed .logo img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.sidebar a {
+  color: white;
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: 1rem;
+  gap: 12px;
+  border-left: 4px solid transparent;
+  transition: background 0.2s ease, border-left-color 0.2s ease;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background: #0d6efd; /* bright blue highlight on hover/active */
+  border-left-color: white; /* white border left similar to network.html */
+}
+
+.sidebar a .fa {
+  min-width: 20px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.sidebar.collapsed a span {
+  display: none; /* hide text on collapse like network.html */
+}
+
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      padding: 3rem clamp(4vw, 7vw, 70px);
+      margin-left: var(--sidebar-width);
+      transition: margin-left var(--transition);
+      overflow-y: auto;
+      background: var(--main-bg);
+      min-height: 100vh;
+    }
+    .sidebar.collapsed + .main-content {
+      margin-left: var(--sidebar-width-collapsed);
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: var(--main-blue-dark);
+      margin-bottom: 1rem;
+    }
+    .welcome-card {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .dashboard-box {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+    .dashboard-box:hover {
+      transform: translateY(-4px);
+    }
+    .dashboard-box i {
+      font-size: 1.6rem;
+      margin-bottom: 0.6rem;
+      color: var(--main-blue);
+      filter: drop-shadow(0 0 3px var(--main-blue));
+    }
+    .dashboard-box h3 {
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: 700;
+    }
+    .dashboard-box p {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    /* Hamburger menu button */
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: none;
+      border: none;
+      font-size: 2.2rem;
+      color: var(--sidebar-active);
+      cursor: pointer;
+      z-index: 1100;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .wrapper {
+        padding-left: 0;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        width: 240px;
+        height: 100vh;
+        transition: left 0.3s ease;
+        border-radius: 0 0 12px 0;
+        z-index: 1001;
+      }
+      .sidebar.open {
+        left: 0;
+      }
+      .sidebar.collapsed {
+        width: 240px;
+      }
+      .sidebar.collapsed a span {
+        display: inline;
+      }
+      .sidebar .logo img {
+        width: 200px;
+        height: 74px;
+        border-radius: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 3rem 1.5rem;
+      }
+
+      .hamburger {
+        display: block;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hamburger button -->
+  <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="sidebar" id="hamburgerBtn">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar Navigation">
+      <div class="logo">
+        <img src="assets/logo1-Photoroom.png" alt="FleetSphere Logo" />
+      </div>
+      <a href="dashboard-delivery.html" class="active" aria-current="page">
+        <i class="fas fa-home" aria-hidden="true"></i><span>Home</span>
+      </a>
+      <a href="jobs.html">
+        <i class="fas fa-tasks" aria-hidden="true"></i><span>Jobs</span>
+      </a>
+      <a href="network.html">
+        <i class="fas fa-users" aria-hidden="true"></i><span>Network</span>
+      </a>
+      <a href="notification.html">
+        <i class="fas fa-bell" aria-hidden="true"></i><span>Notifications</span>
+      </a>
+      <a href="post.html">
+        <i class="fas fa-plus-circle" aria-hidden="true"></i><span>Post</span>
+      </a>
+      <a href="profile.html">
+        <i class="fas fa-user" aria-hidden="true"></i><span>Profile</span>
+      </a>
+      <a href="logout.html" onclick="logout()" role="button" tabindex="0">
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i><span>Logout</span>
+      </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+      <h1 id="welcomeMsg">Welcome, Delivery Partner</h1>
+      <p>Track your jobs, get alerts, and manage your deliveries smartly 🚀</p>
+      <section class="dashboard-grid" aria-label="Dashboard Updates">
+        <article class="dashboard-box" tabindex="0">
+          <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> Tip of the Day</h3>
+          <p>Use quieter inner routes between 5–7 PM to avoid heavy traffic delays and boost efficiency.</p>
+        </article>
+        <article class="dashboard-box" tabindex="0">
+          <h3><i class="fas fa-bolt" aria-hidden="true"></i> New Job Alert</h3>
+          <p>Zomato is urgently hiring delivery partners in the Vastrapur area. Head to the Jobs tab now!</p>
+        </article>
+        <article class="dashboard-box" tabindex="0">
+          <h3><i class="fas fa-clock" aria-hidden="true"></i> Schedule Reminder</h3>
+          <p>Your next job with Swiggy starts at 4:00 PM from CG Road. Be ready and on time!</p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("jobsyUser"));
+    if (!user || user.role !== "delivery") {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("welcomeMsg").textContent = `Welcome, ${user.name}! 🚴‍♂️`;
+    }
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+    
+    // Hamburger toggle logic
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sidebar = document.getElementById('sidebar');
+
+    hamburgerBtn.addEventListener('click', () => {
+      const isExpanded = hamburgerBtn.getAttribute('aria-expanded') === 'true';
+      hamburgerBtn.setAttribute('aria-expanded', !isExpanded);
+      sidebar.classList.toggle('open');
+    });
+
+    // Close sidebar when clicking outside on small screens
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!sidebar.contains(target) && !hamburgerBtn.contains(target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        hamburgerBtn.setAttribute('aria-expanded', false);
+      }
+    });
+
+    // Remove sidebar open on resize if desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024 && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        hamburgerBtn.setAttribute('aria-expanded', false);
+      }
+    });
+  </script>
+</body>
+</html>

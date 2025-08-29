@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Applicants – Jobsy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --main-bg: #f4f8fb;
+      --main-blue: #2063dc;
+      --main-blue-dark: #154ba1;
+      --main-green: #36c07d;
+      --main-red: #ea4e54;
+      --card-shadow: 0 6px 18px rgba(42,105,234,0.07), 0 1.5px 4px rgba(0,0,0,0.02);
+      --card-radius: 1.2rem;
+      --sidebar-bg: #18222f;
+      --sidebar-active: #2151bf;
+      --sidebar-width: 240px;
+      --sidebar-width-collapsed: 64px;
+      --transition: 0.3s cubic-bezier(.5,.7,.4,1);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: var(--main-bg);
+      color: #1a2433;
+      min-height: 100vh;
+      margin: 0;
+      transition: background var(--transition), color var(--transition);
+      overflow-x: hidden;
+    }
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
+      color: #fff;
+      padding: 2rem 0 1rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      transition: width var(--transition);
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .sidebar.collapsed {
+      width: var(--sidebar-width-collapsed);
+    }
+    .sidebar .logo {
+      text-align: center;
+      margin-bottom: 2.2rem;
+      height: 74px;
+      transition: opacity var(--transition);
+    }
+    .sidebar .logo img {
+      width: 200px;
+      height: 74px;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+    }
+    .sidebar.collapsed .logo img {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+    }
+    .sidebar a {
+      color: inherit;
+      padding: 1rem 2.2rem;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      font-size: 1.01rem;
+      gap: 18px;
+      border-left: 4px solid transparent;
+      font-weight: 500;
+      transition: background var(--transition), color var(--transition), border var(--transition);
+      position: relative;
+      white-space: nowrap;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: var(--sidebar-active);
+      color: #fff;
+      border-left: 4px solid var(--main-green);
+    }
+    .sidebar a .fa {
+      width: 20px;
+      min-width: 20px;
+      text-align: center;
+      font-size: 1.13rem;
+    }
+    .sidebar a span {
+      transition: opacity var(--transition), visibility var(--transition);
+      user-select: none;
+    }
+    .sidebar.collapsed a span {
+      opacity: 0;
+      visibility: hidden;
+      width: 0;
+      pointer-events: none;
+    }
+
+    /* Hamburger menu for mobile */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 16px; left: 16px;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: var(--sidebar-active);
+      cursor: pointer;
+      z-index: 1001;
+      transition: color var(--transition);
+      user-select: none;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 15;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sidebar-overlay.active {
+      display: block;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 3.6rem clamp(4vw, 7vw, 70px);
+      background: var(--main-bg);
+      min-height: 100vh;
+      transition: padding var(--transition);
+      position: relative;
+      z-index: 1;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--main-blue-dark);
+      letter-spacing: -1px;
+      margin-bottom: 2.4rem;
+      margin-top: 0;
+    }
+    /* Applicants Card List */
+    #applicants-container {
+      display: grid;
+      gap: 1.6rem;
+      grid-template-columns: repeat(auto-fit, minmax(340px,1fr));
+    }
+
+    .applicant-card {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      padding: 1.7rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.2rem;
+      border: 1.5px solid #f0f4fa;
+      transition: transform var(--transition), box-shadow var(--transition), border var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .applicant-card:hover {
+      border-color: var(--main-blue);
+      box-shadow: 0 10px 30px 0 rgba(32,99,220,.11);
+      transform: translateY(-3px) scale(1.015);
+    }
+
+    .applicant-info {
+      display: flex;
+      align-items: center;
+      gap: 17px;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .applicant-info img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #eee;
+      box-shadow: 0 1.5px 6px 0 rgba(32,99,220,0.09);
+      background: #dde4f4;
+      flex-shrink: 0;
+      user-select: none;
+      pointer-events: none;
+    }
+    .applicant-info-details {
+      min-width: 0;
+      overflow: hidden;
+    }
+    .applicant-info h4 {
+      margin: 0 0 2px 0;
+      font-size: 1.11rem;
+      font-weight: 600;
+      color: var(--main-blue-dark);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      line-height: 1.28;
+    }
+    .applicant-info small {
+      color: #888;
+      font-size: 0.95rem;
+      display: block;
+      line-height: 1.4;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-left: 0.9rem;
+    }
+    .action-buttons button {
+      padding: 7px 14px;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.98rem;
+      box-shadow: 0 1px 3px rgba(32,99,220,.04);
+      transition: background var(--transition), color var(--transition), transform 0.13s;
+      outline: none;
+      min-width: 74px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+    }
+    .accept-btn {
+      background: var(--main-green);
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    .accept-btn:hover { background: #258d4b; }
+    .reject-btn {
+      background: var(--main-red);
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    .reject-btn:hover { background: #b92b38; }
+
+    .empty-msg {
+      grid-column: 1/-1;
+      text-align: center;
+      margin-top: 38px;
+      font-style: italic;
+      color: #7e91ac;
+      font-size: 1.14rem;
+      user-select: none;
+    }
+
+    /* Modal */
+    #applicantModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(12,27,54,0.26);
+      backdrop-filter: blur(3.7px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      animation: fadein 0.45s;
+    }
+    @keyframes fadein {
+      0% { opacity: 0; } 100% { opacity: 1;}
+    }
+    #applicantModal .modal-box {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: 0 10px 38px 0 rgba(20,71,199,0.14);
+      max-width: 425px;
+      padding: 2rem 1.6rem;
+      position: relative;
+      color: #232a30;
+      width: 90vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1.5px solid #e7eefa;
+      animation: scalein 0.21s cubic-bezier(.3,1.1,.7,2.6);
+    }
+    @keyframes scalein {
+      0%{transform:scale(.91);}
+      100%{transform:scale(1);}
+    }
+    #applicantModal .close-btn {
+      position:absolute; top:0.85rem; right:1rem;
+      cursor:pointer; font-size:1.4rem; color: #767b96;
+      padding: 4px 8px;
+      background: rgba(240,245,250,.76);
+      border-radius: 50%;
+      border: 1px solid #e7eefa;
+      transition: background var(--transition), color var(--transition), transform 0.12s;
+      z-index: 2;
+      user-select: none;
+    }
+    #applicantModal .close-btn:hover { background: #dfeaff; color: #e23756; transform: scale(1.15);}
+    #applicantModal h2 {
+      font-size: 1.4rem;
+      margin: 0 0 0.8rem 0;
+      color: var(--main-blue-dark);
+      font-weight: 600;
+      word-break: break-word;
+    }
+    #applicantModal p {
+      margin: 0.6rem 0;
+      font-size: 1.1rem;
+      color: #2e3777;
+      word-break: break-word;
+    }
+    #applicantModal strong { color: #626e99; user-select: none; }
+
+    /* Responsive tweaks */
+    @media (max-width: 1020px) {
+      .main-content { padding: 2rem 3vw; }
+      .sidebar { width: 190px; }
+      .sidebar.collapsed { width: var(--sidebar-width-collapsed);}
+    }
+    @media (max-width: 700px) {
+      .sidebar-toggle {
+        display: inline-block;
+      }
+      /* Sidebar as overlay for mobile */
+      .sidebar {
+        position: fixed;
+        top: 0; left: 0;
+        height: 100dvh;
+        width: var(--sidebar-width);
+        max-width: 280px;
+        padding-top: 80px;
+        transform: translateX(-110%);
+        box-shadow: 0 0 30px 8px rgba(31,72,234,0.058);
+        transition: transform 0.3s ease;
+        z-index: 1010;
+      }
+      .sidebar.collapsed {
+        width: var(--sidebar-width-collapsed);
+        transform: translateX(-110%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      /* Hide scroll on body while sidebar open */
+      body.sidebar-open {
+        overflow: hidden;
+      }
+      /* Overlay */
+      .sidebar-overlay {
+        display: block;
+      }
+      #applicants-container {
+        grid-template-columns: 1fr;
+      }
+      .main-content {
+        padding: 1.5rem 1.5rem 2rem 1.5rem;
+        min-height: auto;
+      }
+    }
+    @media (max-width: 490px) {
+      .main-content {
+        padding: 0.8rem 0.4rem 1.4rem 0.4rem;
+      }
+      .applicant-card {
+        padding: 1.2rem 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .action-buttons {
+        margin-left: 0;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .action-buttons button {
+        min-width: auto;
+        font-size: 0.9rem;
+        padding: 9px 16px;
+      }
+      .applicant-info h4, .applicant-info small {
+        white-space: normal;
+      }
+      .applicant-info {
+        justify-content: center;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 700px) {
+  /* Add left padding to main content to avoid overlap with hamburger */
+  .main-content {
+    padding-left: 3.5rem; /* enough space for hamburger plus a little gap */
+  }
+
+  /* You can also adjust the heading margin for further spacing */
+  .main-content h1 {
+    margin-left: 0.6rem; /* optional, small spacing */
+  }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- Hamburger for sidebar -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar menu" aria-expanded="false" aria-controls="sidebar">
+  <i class="fas fa-bars"></i>
+</button>
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar" aria-label="Primary navigation">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" />
+    </div>
+    <a href="dashboard-company.html"><i class="fas fa-home" aria-hidden="true"></i><span>Home</span></a>
+    <a href="company-post.html"><i class="fas fa-briefcase" aria-hidden="true"></i><span>My Posts</span></a>
+    <a href="post-job.html"><i class="fas fa-plus-circle" aria-hidden="true"></i><span>Post Job</span></a>
+    <a href="company-applicants.html" class="active"><i class="fas fa-users" aria-hidden="true"></i><span>Applicants</span></a>
+    <a href="followers.html"><i class="fas fa-heart" aria-hidden="true"></i><span>Followers</span></a>
+    <a href="company-profile.html"><i class="fas fa-user" aria-hidden="true"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i><span>Logout</span></a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content" id="maincontent" tabindex="-1">
+    <h1>Applicants</h1>
+    <div id="applicants-container" role="list" aria-live="polite">
+      <!-- Cards created by JS -->
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div id="applicantModal" role="dialog" aria-modal="true" aria-labelledby="modalName" aria-describedby="modalDescription">
+  <div class="modal-box">
+    <button class="close-btn" onclick="closeModal()" aria-label="Close applicant details modal">&#x2716;</button>
+    <h2 id="modalName"></h2>
+    <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+    <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
+    <p><strong>Address:</strong> <span id="modalAddress"></span></p>
+    <p><strong>Applied for:</strong> <span id="modalJobTitle"></span></p>
+    <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+  </div>
+</div>
+
+<script>
+  // Sidebar open/close for mobile
+  const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  const sidebarToggleBtn = document.querySelector('.sidebar-toggle');
+  const body = document.body;
+
+  function toggleSidebar() {
+    const isOpen = sidebar.classList.contains('open');
+    if (isOpen) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  }
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    sidebarOverlay.classList.add('active');
+    body.classList.add('sidebar-open');
+    sidebarToggleBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+    body.classList.remove('sidebar-open');
+    sidebarToggleBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  // Auto collapse on resize (desktop/tablet)
+  function autoCollapseSidebar() {
+    if(window.innerWidth >= 700) {
+      closeSidebar();
+    }
+  }
+  window.addEventListener('resize', autoCollapseSidebar);
+  window.addEventListener('DOMContentLoaded', () => {
+    autoCollapseSidebar();
+    fetchApplicants();
+  });
+
+
+  // Checking user role
+  const user = JSON.parse(localStorage.getItem("jobsyUser"));
+  if (!user || user.role !== "company") {
+    window.location.href = "login.html";
+  }
+
+  const container = document.getElementById("applicants-container");
+
+  // Fetch and render applicants
+  async function fetchApplicants() {
+    try {
+      const res = await fetch(`http://localhost:3000/applicants/${user._id}`);
+      const data = await res.json();
+      if (data.success && data.applicants.length > 0) {
+        renderApplicants(data.applicants);
+      } else {
+        container.innerHTML = `<div class="empty-msg">No applicants yet.</div>`;
+      }
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = `<div class="empty-msg">Error fetching applicants.</div>`;
+    }
+  }
+
+  function renderApplicants(applicants) {
+    container.innerHTML = "";
+    applicants.forEach(app => {
+      const card = document.createElement("div");
+      card.className = "applicant-card";
+      const avatar = app.imageUrl || `https://i.pravatar.cc/150?u=${app._id}`;
+      card.innerHTML = `
+        <div class="applicant-info" onclick="viewApplicant(${encodeURIComponent(JSON.stringify(JSON.stringify(app)))})" style="cursor:pointer;flex:1;" tabindex="0" role="listitem" aria-label="Applicant ${app.name}, email ${app.email}, applied for ${app.jobTitle}">
+          <img src="${avatar}" alt="Avatar of ${app.name}" />
+          <div class="applicant-info-details">
+            <h4>${app.name}</h4>
+            <small>${app.email}</small>
+            <small>Applied for: ${app.jobTitle}</small>
+          </div>
+        </div>
+        <div class="action-buttons" onclick="event.stopPropagation()" role="group" aria-label="Actions for ${app.name}">
+          <button class="accept-btn" onclick="updateStatus('${app._id}', 'Accepted')" aria-label="Accept ${app.name} application"><i class="fa fa-check" aria-hidden="true"></i> Accept</button>
+          <button class="reject-btn" onclick="updateStatus('${app._id}', 'Rejected')" aria-label="Reject ${app.name} application"><i class="fa fa-times" aria-hidden="true"></i> Reject</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  async function updateStatus(applicantId, status) {
+    try {
+      const res = await fetch(`http://localhost:3000/applicants/status/${applicantId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Status updated!");
+        fetchApplicants();
+      } else {
+        alert("Failed to update status.");
+      }
+    } catch (err) {
+      console.error("Error updating status:", err);
+      alert("Server error.");
+    }
+  }
+
+  // Modal functions
+  function viewApplicant(appData) {
+    const app = JSON.parse(JSON.parse(decodeURIComponent(appData)));
+    document.getElementById("modalName").textContent = app.name;
+    document.getElementById("modalEmail").textContent = app.email;
+    document.getElementById("modalPhone").textContent = app.phone || "N/A";
+    document.getElementById("modalAddress").textContent = app.address || "N/A";
+    document.getElementById("modalJobTitle").textContent = app.jobTitle;
+    document.getElementById("modalStatus").textContent = app.status;
+    document.getElementById("applicantModal").style.display = "flex";
+    document.getElementById("applicantModal").focus();
+  }
+  function closeModal() {
+    document.getElementById("applicantModal").style.display = "none";
+  }
+
+  // Close modal on pressing Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+      // Close sidebar if open on mobile
+      if(sidebar.classList.contains('open')){
+        closeSidebar();
+      }
+    }
+  });
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+</script>
+</body>
+</html>

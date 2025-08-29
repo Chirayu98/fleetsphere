@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FleetSphere Intro</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      background: url('assets/bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .card {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(15px);
+      padding: 3rem 4rem;
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      z-index: 2;
+      overflow: hidden;
+      transition: transform 0.6s ease, opacity 0.6s ease;
+    }
+
+    /* Glass reflection effect */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 60%, transparent 100%);
+      transform: rotate(25deg);
+      animation: shine 5s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shine {
+      0% { transform: translate(-100%, -100%) rotate(25deg); }
+      100% { transform: translate(100%, 100%) rotate(25deg); }
+    }
+
+    .letter-f {
+      font-size: 6rem;
+      font-weight: 800;
+      color: #111;
+      margin-right: 0.4rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 3;
+    }
+
+    .letter-f:hover {
+      color: #0077b6;
+      text-shadow: 0 0 12px rgba(0, 119, 182, 0.6);
+      transform: scale(1.08);
+    }
+
+    .rest {
+      font-size: 4rem;
+      font-weight: 600;
+      color: #444;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg"></canvas>
+
+  <div class="card" id="fleetsphereCard">
+    <div class="letter-f" id="clickF">F</div>
+    <div class="rest">leetsphere</div>
+  </div>
+
+  <script>
+    // Particle background
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.r = Math.random() * 1.5 + 0.3;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+      draw() {
+        ctx.fillStyle = 'rgba(0,0,0,0.02)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    const particles = Array.from({ length: 60 }, () => new Particle());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Portal Animation
+    const f = document.getElementById('clickF');
+    const card = document.getElementById('fleetsphereCard');
+
+    f.addEventListener('click', () => {
+      card.style.transform = 'translate(-50%, -50%) scale(0.1) rotateX(45deg) rotateY(20deg)';
+      card.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 600);
+    });
+  </script>
+
+</body>
+</html>

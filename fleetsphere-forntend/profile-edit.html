@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Profile – Jobsy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #1e90ff;
+      --bg-glass: rgba(255, 255, 255, 0.12);
+      --input-bg: rgba(255, 255, 255, 0.65);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #dae2f8, #d6a4a4);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      left: -50px;
+      width: 200%;
+      height: 200%;
+      background: url('https://www.transparenttextures.com/patterns/symphony.png');
+      opacity: 0.05;
+      z-index: 0;
+    }
+
+    .edit-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 520px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 40px 35px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 28px;
+      color: var(--primary);
+      margin-bottom: 30px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      transform: translateY(-50%);
+      color: #888;
+      font-size: 15px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      font-size: 15px;
+      background: var(--input-bg);
+      border: none;
+      border-radius: 12px;
+      transition: 0.3s;
+      color: #333;
+      box-shadow: inset 1px 1px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      background: #fff;
+      border: 1px solid var(--primary);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    button {
+      padding: 14px;
+      background-color: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 10px 20px rgba(30, 144, 255, 0.3);
+    }
+
+    button:hover {
+      background-color: #187bd1;
+    }
+
+    button i {
+      margin-right: 8px;
+    }
+
+    @media (max-width: 500px) {
+      .edit-card {
+        padding: 25px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="edit-card">
+    <h2><i class="fas fa-user-edit"></i> Edit Your Profile</h2>
+    <form id="editProfileForm">
+      <div class="input-group">
+        <i class="fas fa-hashtag"></i>
+        <input type="number" id="age" placeholder="Age" />
+      </div>
+      <div class="input-group">
+        <i class="fas fa-calendar-alt"></i>
+        <input type="text" id="dob" placeholder="DOB (e.g. 2002-05-21)" />
+      </div>
+      <div class="input-group">
+        <i class="fas fa-map-marker-alt"></i>
+        <input type="text" id="birthplace" placeholder="Birthplace" />
+      </div>
+      <div class="input-group">
+        <i class="fas fa-car-side"></i>
+        <input type="text" id="numberPlate" placeholder="Number Plate" />
+      </div>
+      <div class="input-group">
+        <i class="fas fa-id-card"></i>
+        <input type="text" id="license" placeholder="License Info" />
+      </div>
+      <div class="input-group">
+        <i class="fas fa-briefcase"></i>
+        <textarea id="experience" placeholder="Experience (e.g. Swiggy – 1 yr, Zomato – 1 yr)"></textarea>
+      </div>
+      <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+    </form>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("jobsyUser"));
+    if (!user || !user._id) {
+      alert("Please login first.");
+      window.location.href = "login.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch(`http://localhost:3000/profile/${user._id}`)
+        .then(res => res.json())
+        .then(data => {
+          const u = data.user;
+          document.getElementById("age").value = u.age || "";
+          document.getElementById("dob").value = u.dob || "";
+          document.getElementById("birthplace").value = u.birthplace || "";
+          document.getElementById("numberPlate").value = u.numberPlate || "";
+          document.getElementById("license").value = u.license || "";
+          document.getElementById("experience").value = u.experience?.join(', ') || "";
+        })
+        .catch(err => {
+          console.error("Failed to load user data for editing:", err);
+          alert("Could not load your profile.");
+        });
+    });
+
+    const form = document.getElementById("editProfileForm");
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const age = document.getElementById("age").value;
+      const dob = document.getElementById("dob").value;
+      const birthplace = document.getElementById("birthplace").value;
+      const numberPlate = document.getElementById("numberPlate").value;
+      const license = document.getElementById("license").value;
+      const experienceRaw = document.getElementById("experience").value;
+
+      const experience = experienceRaw
+        .split(',')
+        .map(item => item.trim())
+        .filter(item => item.length > 0);
+
+      try {
+        const res = await fetch(`http://localhost:3000/profile/${user._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ age, dob, birthplace, numberPlate, license, experience })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert("Profile updated successfully!");
+          window.location.href = "profile.html";
+        } else {
+          alert("Update failed: " + data.message);
+        }
+      } catch (err) {
+        console.error("Update error:", err);
+        alert("Something went wrong. Try again later.");
+      }
+    });
+  </script>
+</body>
+</html>

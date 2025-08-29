@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile – Jobsy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #eef3fa, #fdfdfd);
+  color: #333;
+  min-height: 100vh;
+}
+
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #000;
+  color: white;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar .logo img {
+  width: 160px;
+}
+
+.sidebar a {
+  color: white;
+  padding: 15px 30px;
+  display: block;
+  text-decoration: none;
+  transition: background 0.3s, padding-left 0.3s;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background-color: #0d6efd;
+  padding-left: 35px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px;
+  background-color: #f9fafc;
+  transition: background 0.3s;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.profile-header img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #1e90ff;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.profile-header h2 {
+  margin-bottom: 5px;
+  font-size: 24px;
+  color: #1e90ff;
+}
+
+.profile-header p {
+  font-size: 14px;
+  color: #777;
+}
+
+.section-box {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 25px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  transition: 0.3s ease;
+}
+
+.section-box:hover {
+  transform: translateY(-3px);
+}
+
+.section-box h3 {
+  color: #1e90ff;
+  margin-bottom: 15px;
+}
+
+.section-box ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.section-box ul li {
+  padding: 6px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+.activity-buttons .btn {
+  border-radius: 50px;
+  font-weight: 600;
+  padding: 10px 20px;
+  background: #1e90ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.activity-buttons .btn:hover {
+  background: #0d6efd;
+  transform: translateY(-2px);
+}
+
+/* Edit button */
+.edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 8px 18px;
+  background: #ffffff;
+  color: #1e90ff;
+  border: 2px solid #1e90ff;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.edit-btn i {
+  font-size: 14px;
+}
+
+.edit-btn:hover {
+  background: #1e90ff;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode */
+.dark-mode {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.dark-mode .main-content {
+  background-color: #1e293b;
+}
+
+.dark-mode .section-box {
+  background: rgba(51, 65, 85, 0.95);
+  color: #f1f5f9;
+}
+
+.dark-mode .section-box ul li {
+  color: #cbd5e1;
+}
+
+.dark-mode .profile-header h2 {
+  color: #60a5fa;
+}
+
+.dark-mode .edit-btn {
+  background: transparent;
+  color: #60a5fa;
+  border: 2px solid #60a5fa;
+}
+
+.dark-mode .edit-btn:hover {
+  background: #60a5fa;
+  color: white;
+}
+
+
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="sidebar">
+    <div class="logo">
+    <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" class="logo-img" style="width: 180px; height: auto;" />
+  </div>
+    <a href="dashboard-delivery.html"><i class="fas fa-home me-2"></i>Home</a>
+    <a href="jobs.html"><i class="fas fa-tasks me-2"></i>Jobs</a>
+    <a href="network.html"><i class="fas fa-users me-2"></i>Network</a>
+    <a href="notification.html"><i class="fas fa-bell me-2"></i>Notifications</a>
+    <a href="post.html"><i class="fas fa-plus-circle me-2"></i>Post</a>
+    <a href="profile.html" class="active"><i class="fas fa-user me-2"></i>Profile</a>
+    
+    <a href="logout.html" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+  </div>
+
+  <div class="main-content">
+    <div class="profile-header">
+  <img src="assets/user-profile.jpg" class="profile-pic-large" alt="User" />
+  <h2 id="userName">Delivery Partner</h2>
+  <p id="location">📍 Ahmedabad, Gujarat</p>
+  <p id="status">Open for Work | 2+ years experience</p>
+
+  <a href="profile-edit.html" class="edit-btn">
+    <i class="fas fa-pen"></i> Edit Profile
+  </a>
+</div>
+
+
+    <div class="section-box">
+      <h3>Personal Details</h3>
+      <ul>
+        <li id="age"><strong>Age:</strong></li>
+        <li id="dob"><strong>DOB:</strong></li>
+        <li id="birthplace"><strong>Birthplace:</strong></li>
+        <li id="vehicleName"><strong>Vehicle:</strong></li>
+        <li id="numberPlate"><strong>Number Plate:</strong></li>
+        <li id="license"><strong>License:</strong></li>
+      </ul>
+    </div>
+
+    <div class="section-box">
+      <h3>Quick Actions</h3>
+      <div class="d-flex flex-wrap gap-3 activity-buttons">
+        <button class="btn btn-primary">My Posts</button>
+        <button class="btn btn-primary">My Comments</button>
+        <button class="btn btn-primary">Uploaded Images</button>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <h3>Experience</h3>
+      <ul id="experienceList"></ul>
+    </div>
+
+    <div class="section-box">
+      <h3>Skills & Highlights</h3>
+      <ul>
+        <li>✅ Fast Delivery Strategist</li>
+        <li>⭐ 4.8/5 Customer Feedback</li>
+        <li>📱 Uses GPS, Route Apps Effectively</li>
+        <li>🎖 Festival Time Delivery Achiever</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  const user = JSON.parse(localStorage.getItem("jobsyUser"));
+
+  if (!user || !user._id) {
+    alert("Please login first.");
+    window.location.href = "login.html";
+  }
+
+  const userId = user._id;
+
+  fetch(`http://localhost:3000/user/${userId}`)
+
+    .then(res => res.json())
+    .then(data => {
+      const u = data.user;
+
+      document.getElementById("userName").textContent = u.name;
+      document.getElementById("location").textContent = `📍 ${u.birthplace}`;
+      document.getElementById("status").textContent = `Open for Work | ${u.age - 20}+ years experience`;
+
+      document.getElementById("age").innerHTML = `<strong>Age:</strong> ${u.age}`;
+      document.getElementById("dob").innerHTML = `<strong>DOB:</strong> ${u.dob}`;
+      document.getElementById("birthplace").innerHTML = `<strong>Birthplace:</strong> ${u.birthplace}`;
+      document.getElementById("vehicleName").innerHTML = `<strong>Vehicle:</strong> ${u.vehicleName}`;
+      document.getElementById("numberPlate").innerHTML = `<strong>Number Plate:</strong> ${u.numberPlate}`;
+      document.getElementById("license").innerHTML = `<strong>License:</strong> ${u.license}`;
+
+      const experienceList = document.getElementById("experienceList");
+      experienceList.innerHTML = "";
+      u.experience.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        experienceList.appendChild(li);
+      });
+    })
+    .catch(err => {
+      console.error("Error loading profile:", err);
+      alert("Failed to load profile data.");
+    });
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+</script>
+</body>
+</html>

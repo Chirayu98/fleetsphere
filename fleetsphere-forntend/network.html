@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Network – Jobsy</title>
+
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #000000;
+      color: white;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+    .sidebar.collapsed {
+      width: 70px;
+    }
+    .sidebar .logo {
+      text-align: center;
+      font-weight: bold;
+      margin: 0 15px 30px;
+    }
+    .sidebar .logo img {
+      max-width: 90%;
+      height: auto;
+      transition: all 0.3s ease;
+    }
+    .sidebar.collapsed .logo img {
+      max-width: 50px;
+      border-radius: 50%;
+    }
+    .sidebar a {
+      color: inherit;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: background 0.2s;
+      white-space: nowrap;
+      font-weight: 600;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .sidebar.collapsed a {
+      padding: 15px 12px;
+      justify-content: center;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #0d6efd;
+      border-left: 4px solid white;
+    }
+    .sidebar.collapsed a:hover,
+    .sidebar.collapsed a.active {
+      border-left: none;
+      background: #0d6efd;
+      border-radius: 0 20px 20px 0;
+    }
+    .sidebar i {
+      min-width: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .sidebar.collapsed a span {
+      display: none;
+    }
+    /* Hamburger toggle */
+    .hamburger {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: transparent;
+      border: none;
+      font-size: 2rem;
+      color: #0d6efd;
+      cursor: pointer;
+      z-index: 1100;
+      display: none;
+    }
+    /* Main content */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 40px;
+      background: transparent;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+      overflow-y: auto;
+    }
+    .sidebar.collapsed ~ .main-content {
+      margin-left: 70px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      color: #1e90ff;
+    }
+    .summary-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+      margin: 18px 0;
+      transition: transform 0.3s;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .summary-card:hover {
+      transform: translateY(-5px);
+    }
+    .summary-card h3 {
+      font-weight: 600;
+    }
+    /* Lists */
+    .invitation-card, .suggestion-card {
+      background: rgba(255,255,255,0.9);
+      padding: 18px 22px;
+      margin-top: 18px;
+      border-radius: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.3s;
+    }
+    .invitation-card:hover, .suggestion-card:hover {
+      transform: translateY(-4px);
+    }
+    .invitation-card .info, .suggestion-card .info {
+      flex-grow:1;
+    }
+    .invitation-card h4, .suggestion-card h4 {
+      margin-bottom: 4px;
+      font-size: 1.1rem;
+    }
+    .invitation-card p, .suggestion-card p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .invitation-card small, .suggestion-card small {
+      font-size: 0.75rem;
+      color: #999;
+    }
+    .btn {
+      background: #1e90ff;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.3s;
+      user-select: none;
+    }
+    .btn:hover {
+      background: #0d6efd;
+    }
+    /* Responsive */
+    @media (max-width:900px) {
+      .hamburger {
+        display: block;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        width: 250px;
+        height: 100vh;
+        padding-top: 60px;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+      }
+      .sidebar.open {
+        left: 0;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+    }
+    @media (max-width:480px) {
+      .summary-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .summary-card h3 {
+        margin-bottom: 8px;
+      }
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+      .invitation-card, .suggestion-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .btn {
+        margin-top: 10px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="sidebar" id="hamburgerBtn" tabindex="0">
+  <i class="fas fa-bars"></i>
+</button>
+
+<div class="wrapper">
+  <nav class="sidebar" id="sidebar" aria-label="Sidebar Navigation">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" class="logo-img"/>
+    </div>
+    <a href="dashboard-delivery.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="jobs.html" class="active"><i class="fas fa-tasks"></i><span>Jobs</span></a>
+    <a href="network.html"><i class="fas fa-users"></i><span>Network</span></a>
+    <a href="notification.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+    <a href="post.html"><i class="fas fa-plus-circle"></i><span>Post</span></a>
+    <a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </nav>
+
+  <main class="main-content" role="main">
+    <h2>My Network</h2>
+    <p>Manage your connections and explore new contacts in the delivery network.</p>
+
+    <div class="summary-card" id="connections-tab" tabindex="0" role="button" aria-pressed="false" aria-label="View Connections">
+      <h3>Connections</h3>
+      <p id="connection-count">0</p>
+    </div>
+
+    <div class="summary-card" id="followings-tab" tabindex="0" role="button" aria-pressed="false" aria-label="View Following">
+      <h3>Following</h3>
+      <p>4 Recruiters</p>
+    </div>
+
+    <div class="summary-card" id="groups-tab" tabindex="0" role="button" aria-pressed="false" aria-label="View Groups">
+      <h3>Groups</h3>
+      <p>3 Joined</p>
+    </div>
+
+    <h3 style="margin-top: 30px;">Invitations</h3>
+    <div class="invitation-card" tabindex="0">
+      <div class="info">
+        <h4>Aryan Patel</h4>
+        <p>Delivery Partner – Naranpura</p>
+      </div>
+      <button class="btn" aria-label="Accept connection invitation from Aryan Patel">Accept</button>
+    </div>
+
+    <div class="invitation-card" tabindex="0">
+      <div class="info">
+        <h4>Sneha Desai</h4>
+        <p>Delivery Partner – Chandkheda</p>
+      </div>
+      <button class="btn" aria-label="Accept connection invitation from Sneha Desai">Accept</button>
+    </div>
+
+    <h3 style="margin-top: 40px;">People You May Know</h3>
+    <div class="suggestion-card" tabindex="0">
+      <div class="info">
+        <h4>Vivek Sharma</h4>
+        <p>Delivery Partner – Vastrapur</p>
+        <small>2 Mutual Connections · 1 Yr Experience</small>
+      </div>
+      <button class="btn" aria-label="Connect with Vivek Sharma">Connect</button>
+    </div>
+
+    <div class="suggestion-card" tabindex="0">
+      <div class="info">
+        <h4>Kajal Thakkar</h4>
+        <p>Delivery Partner – Paldi</p>
+        <small>Same Area · 6 Months Experience</small>
+      </div>
+      <button class="btn" aria-label="Connect with Kajal Thakkar">Connect</button>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Sidebar toggle
+  const hamburger = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+
+  hamburger.addEventListener('click', () => {
+    const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+    hamburger.setAttribute('aria-expanded', !expanded);
+    sidebar.classList.toggle('open');
+    document.body.classList.toggle('sidebar-open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', false);
+        document.body.classList.remove('sidebar-open');
+      }
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 900 && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', false);
+      document.body.classList.remove('sidebar-open');
+    }
+  });
+
+  // User session check and data initialization
+  document.addEventListener('DOMContentLoaded', () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    // Set example Connection count, replace with API fetch in production
+    const connectionCount = 5;
+    document.getElementById("connection-count").textContent = connectionCount;
+
+    // Invitation acceptance handlers
+    document.querySelectorAll(".invitation-card .btn").forEach(btn => {
+      btn.onclick = () => {
+        const card = btn.closest('.invitation-card');
+        const name = card.querySelector('h4').textContent;
+        alert(`Accepted connection with ${name}`);
+        card.remove();
+        let count = parseInt(document.getElementById("connection-count").textContent) || 0;
+        document.getElementById("connection-count").textContent = count + 1;
+      }
+    });
+
+    // Suggestion connect handlers
+    document.querySelectorAll(".suggestion-card .btn").forEach(btn => {
+      btn.onclick = () => {
+        const card = btn.closest('.suggestion-card');
+        const name = card.querySelector('h4').textContent;
+        alert(`Connection request sent to ${name}`);
+        card.remove();
+      }
+    });
+  });
+
+   document.getElementById('connections-tab').addEventListener('click', () => {
+    window.location.href = 'connection.html';  // Redirect on click
+  });
+
+  document.getElementById('followings-tab').addEventListener('click', () => {
+    window.location.href = 'following.html';  // Redirect on click
+  });
+
+  // Also enable keyboard accessibility
+  document.getElementById('connections-tab').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      window.location.href = 'connection.html';
+    }
+  });
+
+  document.getElementById('followings-tab').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      window.location.href = 'following.html';
+    }
+  });
+
+  // Logout function
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>

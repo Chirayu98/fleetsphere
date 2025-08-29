@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Company Dashboard – Jobsy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+:root {
+  --main-bg: #f4f8fb;
+  --main-blue: #2063dc;
+  --main-blue-dark: #154ba1;
+  --main-green: #36c07d;
+  --sidebar-bg: #18222f;
+  --sidebar-active: #2151bf;
+  --sidebar-width: 240px;
+  --sidebar-width-collapsed: 64px;
+  --transition: 0.3s cubic-bezier(.5,.7,.4,1);
+}
+* {box-sizing: border-box; font-family: 'Poppins', sans-serif;}
+body {
+  background: var(--main-bg);
+  margin:0; color:#1a2433;
+  min-height:100vh; overflow-x:hidden;
+}
+.wrapper {display:flex; min-height:100vh; position:relative;}
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  color: #fff;
+  padding: 2rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  transition: width var(--transition);
+  min-height:100vh;
+  position:sticky; top:0;
+}
+.sidebar.collapsed {width: var(--sidebar-width-collapsed);}
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.sidebar .logo img {
+  width:200px; height:74px;
+  object-fit:contain;
+}
+.sidebar.collapsed .logo img {
+  width:54px;height:54px;border-radius:50%;
+}
+.sidebar a {
+  color: inherit;
+  padding: 1rem 2rem;
+  display:flex;align-items:center;
+  text-decoration:none;
+  font-size:1rem;gap:18px;
+  border-left:4px solid transparent;
+  transition: background var(--transition), border var(--transition);
+}
+.sidebar a:hover, .sidebar a.active {
+  background: var(--sidebar-active);
+  border-left-color: var(--main-green);
+}
+.sidebar a .fa {min-width:20px;}
+.sidebar a span {transition: opacity var(--transition);}
+.sidebar.collapsed a span {opacity:0; visibility:hidden;}
+/* Hamburger */
+.sidebar-toggle {
+  display:none;
+  position:fixed;top:16px;left:16px;
+  background:none;border:none;font-size:2rem;
+  color:var(--sidebar-active);cursor:pointer;z-index:1001;
+}
+.sidebar-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.4); z-index:15;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+.sidebar-overlay.active {
+  display:block; opacity:1; pointer-events:auto;
+}
+/* Main Content */
+.main-content {
+  flex:1; padding:3rem clamp(4vw,7vw,70px);
+}
+h1 {font-size:2rem;color:var(--main-blue-dark);margin-bottom:1rem;}
+.welcome-card {
+  background:#fff; padding:1.5rem; border-radius:1rem;
+  box-shadow:0 6px 16px rgba(0,0,0,0.05);
+  margin-bottom:2rem;
+}
+.dashboard-grid {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1.5rem;
+}
+.dashboard-box {
+  background:#fff;padding:1.5rem;border-radius:1rem;
+  box-shadow:0 6px 16px rgba(0,0,0,0.05);
+  transition:transform 0.2s;
+}
+.dashboard-box:hover {transform:translateY(-4px);}
+.dashboard-box i {
+  font-size:1.6rem;margin-bottom:0.6rem;color:var(--main-blue);
+}
+.dashboard-box h3 {margin-bottom:5px;color:#333;}
+.dashboard-box p {color:#666;font-size:0.95rem;}
+/* Dark mode */
+.dark-mode {background:#1e1e2f; color:#eee;}
+.dark-mode .main-content {background:#1e1e2f; color:#eee;}
+.dark-mode .sidebar {background:#162040;}
+.dark-mode .sidebar a {color:#eee;}
+.dark-mode .sidebar a.active, .dark-mode .sidebar a:hover {background:#3e5cb1;}
+.dark-mode .dashboard-box, .dark-mode .welcome-card {
+  background:#2b2d42; color:#eee;
+}
+/* Responsive */
+@media(max-width:1020px){
+  .main-content {padding:2rem 3vw;}
+  .sidebar{width:190px;}
+}
+@media(max-width:700px){
+  .sidebar-toggle{display:inline-block;}
+  .sidebar{
+    position:fixed;top:0;left:0;height:100dvh;
+    transform:translateX(-110%);
+    max-width:280px; padding-top:80px;
+    box-shadow:0 0 30px rgba(0,0,0,0.1);
+    transition:transform 0.3s ease;
+    z-index:1010;
+  }
+  .sidebar.open{transform:translateX(0);}
+  body.sidebar-open{overflow:hidden;}
+  .sidebar-overlay{display:block;}
+  .main-content {padding:1.5rem;}
+}
+@media(max-width:480px){
+  .dashboard-grid {grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<!-- Hamburger -->
+<button class="sidebar-toggle" onclick="toggleSidebar()">
+  <i class="fas fa-bars"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo"/>
+    </div>
+    <a href="dashboard-company.html" class="active"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="company-post.html"><i class="fas fa-briefcase"></i><span>My Posts</span></a>
+    <a href="post-job.html"><i class="fas fa-plus-circle"></i><span>Post Job</span></a>
+    <a href="company-applicants.html"><i class="fas fa-users"></i><span>Applicants</span></a>
+    <a href="followers.html"><i class="fas fa-heart"></i><span>Followers</span></a>
+    <a href="company-profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </nav>
+  <!-- Main Content -->
+  <main class="main-content">
+    <h1 id="welcomeText">Welcome, Company 👔</h1>
+    <div class="welcome-card" id="welcomeCard">
+      <p>Loading your dashboard...</p>
+    </div>
+    <div class="dashboard-grid">
+      <div class="dashboard-box">
+        <i class="fas fa-briefcase"></i>
+        <h3>My Jobs</h3>
+        <p id="jobCount">Loading...</p>
+      </div>
+      <div class="dashboard-box">
+        <i class="fas fa-users"></i>
+        <h3>Applicants</h3>
+        <p id="applicantCount">Loading...</p>
+      </div>
+      <div class="dashboard-box">
+        <i class="fas fa-heart"></i>
+        <h3>Followers</h3>
+        <p id="followerCount">Loading...</p>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+const sidebar=document.getElementById('sidebar');
+const overlay=document.getElementById('sidebarOverlay');
+const toggleBtn=document.querySelector('.sidebar-toggle');
+function toggleSidebar(){
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+  document.body.classList.toggle('sidebar-open');
+}
+function closeSidebar(){
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+  document.body.classList.remove('sidebar-open');
+}
+window.addEventListener('resize',()=>{if(window.innerWidth>=700) closeSidebar();});
+
+const user=JSON.parse(localStorage.getItem("jobsyUser"));
+if(!user||user.role!=="company"){window.location.href="login.html";}
+function logout(){localStorage.clear();window.location.href="login.html";}
+
+async function loadDashboard(){
+  try{
+    const companyRes=await fetch(`http://localhost:3000/companies/${user._id}`);
+    const companyData=await companyRes.json();
+    const companyName=companyData?.company?.name||"Company";
+    document.getElementById("welcomeText").innerText=`Welcome, ${companyName} 👔`;
+    document.getElementById("welcomeCard").innerHTML=`<p>This is your dashboard, <b>${companyName}</b>. You can post jobs, manage applicants, and view your hiring analytics here.</p>`;
+    const jobsRes=await fetch(`http://localhost:3000/jobs/company/${user._id}`);
+    const jobsData=await jobsRes.json();
+    document.getElementById("jobCount").innerText=`${jobsData.jobs?.length||0} job(s) posted`;
+    const appRes=await fetch(`http://localhost:3000/applicants/${user._id}`);
+    const appData=await appRes.json();
+    document.getElementById("applicantCount").innerText=`${appData.applicants?.length||0} applicant(s)`;
+    const followerRes=await fetch(`http://localhost:3000/followers/${user._id}`);
+    const followerData=await followerRes.json();
+    document.getElementById("followerCount").innerText=`${followerData.followers?.length||0} follower(s)`;
+  }catch(err){
+    console.error(err);
+    document.getElementById("welcomeCard").innerHTML="<p>Failed to load dashboard data.</p>";
+  }
+}
+window.addEventListener('DOMContentLoaded',loadDashboard);
+</script>
+</body>
+</html>

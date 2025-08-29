@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Apply for Job – JobRoute</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right top, #e6f0ff, #ffffff);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 35px 30px;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(12px);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-container h2 {
+      text-align: center;
+      color: #1e90ff;
+      font-size: 26px;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 12px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      background: #fdfdfd;
+      transition: border 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #1e90ff;
+      outline: none;
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+    }
+
+    .form-buttons button {
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn {
+      background-color: #1e90ff;
+      color: white;
+    }
+
+    .submit-btn:hover {
+      background-color: #0d6efd;
+      transform: scale(1.03);
+    }
+
+    .cancel-btn {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+
+    .cancel-btn:hover {
+      background-color: #d1d1d1;
+      transform: scale(1.03);
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 25px;
+      text-align: center;
+      text-decoration: none;
+      color: #1e90ff;
+      font-weight: 500;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #0d6efd;
+    }
+
+    @media (max-width: 600px) {
+      .form-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2 id="jobTitle">Apply for Job</h2>
+
+    <form id="applyForm">
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="number" name="age" placeholder="Age" required />
+      <input type="tel" name="phone" placeholder="Phone Number" required />
+      <input type="text" name="vehicle" placeholder="Vehicle Name" required />
+      <input type="text" name="numberPlate" placeholder="Vehicle Number Plate" required />
+      <input type="text" name="license" placeholder="License Number" required />
+
+      <div class="form-buttons">
+        <button type="submit" class="submit-btn">Submit</button>
+        <button type="button" class="cancel-btn" onclick="history.back()">Cancel</button>
+      </div>
+    </form>
+
+    <a href="dashboard-delivery.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const job = params.get('job');
+    if (job) {
+      document.getElementById("jobTitle").textContent = `Apply for ${job}`;
+    }
+
+    document.getElementById("applyForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = {
+        name: this.name.value,
+        age: this.age.value,
+        phone: this.phone.value,
+        vehicle: this.vehicle.value,
+        numberPlate: this.numberPlate.value,
+        license: this.license.value,
+        job: job || "N/A"
+      };
+
+      fetch("http://localhost:3000/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || "Application submitted!");
+        window.location.href = "dashboard.html";
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("Something went wrong. Please try again.");
+      });
+    });
+  </script>
+
+</body>
+</html>

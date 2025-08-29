@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jobs – Jobsy</title>
+
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #000000;
+      color: white;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100%;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+      transition: width 0.3s ease;
+      z-index: 1000;
+    }
+    .sidebar.collapsed {
+      width: 70px;
+    }
+    .sidebar .logo {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      padding: 0 10px;
+    }
+    .sidebar .logo img {
+      width: 180px;
+      height: auto;
+      object-fit: contain;
+      transition: width 0.3s, height 0.3s, border-radius 0.3s;
+    }
+    .sidebar.collapsed .logo img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+    }
+    .sidebar a {
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      font-size: 1rem;
+      gap: 12px;
+      border-left: 4px solid transparent;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.2s, border-left-color 0.2s;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #0d6efd;
+      border-left-color: white;
+    }
+    .sidebar.collapsed a {
+      padding: 15px 12px;
+      justify-content: center;
+    }
+    .sidebar.collapsed a:hover,
+    .sidebar.collapsed a.active {
+      border-left: none;
+      background: #0d6efd;
+      border-radius: 0 20px 20px 0;
+    }
+    .sidebar i {
+      min-width: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .sidebar.collapsed a span {
+      display: none;
+    }
+
+    /* Hamburger toggle button */
+    .hamburger {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      background: transparent;
+      border: none;
+      font-size: 2rem;
+      color: #0d6efd;
+      cursor: pointer;
+      z-index: 1100;
+      display: none;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 40px;
+      background: transparent;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+    }
+    .sidebar.collapsed ~ .main-content {
+      margin-left: 70px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      color: #1e90ff;
+    }
+
+    /* Filters */
+    .job-filters {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .job-filters select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #fff;
+      min-width: 150px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: border-color 0.25s ease;
+    }
+
+    .job-filters select:focus {
+      outline: none;
+      border-color: #0d6efd;
+      box-shadow: 0 0 6px rgba(13, 110, 253, 0.6);
+    }
+
+    /* Job Listing Cards */
+    .job-listing {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .job-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .job-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .job-card h3 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .job-card p {
+      margin: 6px 0;
+      font-size: 14px;
+      color: #555;
+      flex-grow: 1;
+    }
+
+    .apply-btn {
+      padding: 10px 16px;
+      background: #1e90ff;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+      align-self: flex-start;
+    }
+
+    .apply-btn:hover {
+      background: #0d6efd;
+    }
+
+    .chat-btn {
+      padding: 8px 14px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.3s ease;
+      align-self: flex-start;
+    }
+
+    .chat-btn:hover {
+      background: #218838;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hamburger {
+        display: block;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        height: 100vh;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+        padding-top: 60px;
+        width: 250px;
+      }
+      .sidebar.open {
+        left: 0;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .job-listing {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      .job-card {
+        flex-direction: column;
+      }
+      .apply-btn, .chat-btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<button class="hamburger" aria-label="Toggle menu" aria-controls="sidebar" aria-expanded="false" id="hamburgerBtn">
+  <i class="fas fa-bars"></i>
+</button>
+
+<div class="wrapper">
+  <nav class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar Navigation">
+    <div class="logo">
+      <img src="assets/logo1-Photoroom.png" alt="Jobsy Logo" class="logo-img" />
+    </div>
+    <a href="dashboard-delivery.html"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="jobs.html" class="active"><i class="fas fa-tasks"></i><span>Jobs</span></a>
+    <a href="network.html"><i class="fas fa-users"></i><span>Network</span></a>
+    <a href="notification.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+    <a href="post.html"><i class="fas fa-plus-circle"></i><span>Post</span></a>
+    <a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+  </nav>
+
+  <main class="main-content">
+    <h2>Available Delivery Jobs</h2>
+
+    <!-- Job Filters -->
+    <div class="job-filters">
+      <select id="companyFilter">
+        <option selected disabled>Company</option>
+      </select>
+      <select id="locationFilter">
+        <option selected disabled>Location</option>
+      </select>
+      <select id="jobTypeFilter">
+        <option selected disabled>Job Type</option>
+      </select>
+    </div>
+
+    <!-- Job Listings -->
+    <div class="job-listing" id="job-listing">
+      <!-- Jobs injected dynamically -->
+    </div>
+  </main>
+</div>
+
+<script>
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+
+  hamburgerBtn.addEventListener('click', () => {
+    const expanded = hamburgerBtn.getAttribute('aria-expanded') === 'true';
+    hamburgerBtn.setAttribute('aria-expanded', !expanded);
+    sidebar.classList.toggle('open');
+    document.body.classList.toggle('sidebar-open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sidebar.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        hamburgerBtn.setAttribute('aria-expanded', false);
+        document.body.classList.remove('sidebar-open');
+      }
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 900 && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      hamburgerBtn.setAttribute('aria-expanded', false);
+      document.body.classList.remove('sidebar-open');
+    }
+  });
+
+  const jobListingDiv = document.getElementById("job-listing");
+  const companyFilter = document.getElementById("companyFilter");
+  const locationFilter = document.getElementById("locationFilter");
+  const jobTypeFilter = document.getElementById("jobTypeFilter");
+
+  let allJobs = [];
+
+  async function loadJobs() {
+    try {
+      const res = await fetch("http://localhost:3000/jobs");
+      const data = await res.json();
+
+      if (data.success && data.jobs.length > 0) {
+        allJobs = data.jobs;
+        populateFilters(allJobs);
+        renderJobs(allJobs);
+      } else {
+        jobListingDiv.innerHTML = `<p style="color: gray;">No jobs found at the moment.</p>`;
+      }
+    } catch (err) {
+      console.error("Error fetching jobs:", err);
+      jobListingDiv.innerHTML = `<p style="color: red;">Failed to load jobs.</p>`;
+    }
+  }
+
+  function renderJobs(jobs) {
+    jobListingDiv.innerHTML = "";
+
+    if (jobs.length === 0) {
+      jobListingDiv.innerHTML = `<p style="color: gray;">No jobs match your filters.</p>`;
+      return;
+    }
+
+    jobs.forEach(job => {
+      const card = document.createElement("div");
+      card.className = "job-card";
+
+      const companyName = job.companyId?.name || job.company || "Company";
+      const location = job.location || "Unknown";
+      const jobType = job.jobType || "N/A";
+      const salary = job.salary || "N/A";
+
+      card.innerHTML = `
+        <h3>${companyName} – ${jobType}</h3>
+        <p>📍 ${location}</p>
+        <p>💰 ${salary}</p>
+        <button class="apply-btn" onclick="applyJob('${job._id}', '${job.companyId?._id || ''}')">Apply Now</button>
+       
+      `;
+      jobListingDiv.appendChild(card);
+    });
+  }
+
+  async function applyJob(jobId, companyId) {
+    const user = JSON.parse(localStorage.getItem("jobsyUser"));
+    if (!user || user.role !== "delivery") {
+      alert("Only delivery users can apply for jobs.");
+      return;
+    }
+    try {
+      const res = await fetch("http://localhost:3000/applicants", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user._id, jobId, companyId })
+      });
+
+      const data = await res.json();
+      alert(data.message);
+    } catch (err) {
+      console.error("Apply failed:", err);
+      alert("Failed to apply.");
+    }
+  }
+
+  function populateFilters(jobs) {
+    const companies = [...new Set(jobs.map(j => j.companyId?.name || j.company).filter(Boolean))];
+    const locations = [...new Set(jobs.map(j => j.location).filter(Boolean))];
+    const jobTypes = [...new Set(jobs.map(j => j.jobType).filter(Boolean))];
+
+    companyFilter.innerHTML = `<option selected disabled>Company</option>` + companies.map(c => `<option>${c}</option>`).join('');
+    locationFilter.innerHTML = `<option selected disabled>Location</option>` + locations.map(l => `<option>${l}</option>`).join('');
+    jobTypeFilter.innerHTML = `<option selected disabled>Job Type</option>` + jobTypes.map(t => `<option>${t}</option>`).join('');
+  }
+
+  function applyFilters() {
+    const selectedCompany = companyFilter.value;
+    const selectedLocation = locationFilter.value;
+    const selectedJobType = jobTypeFilter.value;
+
+    let filteredJobs = allJobs;
+
+    if (selectedCompany && selectedCompany !== "Company") {
+      filteredJobs = filteredJobs.filter(job => (job.companyId?.name || job.company) === selectedCompany);
+    }
+
+    if (selectedLocation && selectedLocation !== "Location") {
+      filteredJobs = filteredJobs.filter(job => job.location === selectedLocation);
+    }
+
+    if (selectedJobType && selectedJobType !== "Job Type") {
+      filteredJobs = filteredJobs.filter(job => job.jobType === selectedJobType);
+    }
+
+    renderJobs(filteredJobs);
+  }
+
+
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+
+  // Event listeners
+  companyFilter.addEventListener("change", applyFilters);
+  locationFilter.addEventListener("change", applyFilters);
+  jobTypeFilter.addEventListener("change", applyFilters);
+
+  loadJobs();
+</script>
+
+</body>
+</html>
